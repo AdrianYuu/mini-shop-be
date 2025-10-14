@@ -138,7 +138,7 @@ None
 - Method: POST
 - URL: /product-categories
 - Headers:
-    - None
+    - Content-Type: application/json
 - Cookies:
     - token (admin)
 
@@ -223,7 +223,7 @@ None
 - Method: PATCH
 - URL: /product-categories/{product_category_id}
 - Headers:
-    - None
+    - Content-Type: application/json
 - Cookies:
     - token (admin)
 
