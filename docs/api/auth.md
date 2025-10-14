@@ -25,7 +25,9 @@
   "data": {
     "id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
     "name": "Adrian Yu",
-    "email": "adrian.yu@gmail.com"
+    "email": "adrian.yu@gmail.com",
+    "bio": null,
+    "image_url": null
   }  
 }
 ```
@@ -74,7 +76,9 @@
   "data": {
     "id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
     "name": "Adrian Yu",
-    "email": "adrian.yu@gmail.com"
+    "email": "adrian.yu@gmail.com",
+    "bio": null,
+    "image_url": null
   }
 }
 ```
@@ -114,7 +118,9 @@ None
   "data": {
     "id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
     "name": "Adrian Yu",
-    "email": "adrian.yu@gmail.com"
+    "email": "adrian.yu@gmail.com",
+    "bio": null,
+    "image_url": null
   }
 }
 ```
