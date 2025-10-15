@@ -1,5 +1,6 @@
 package com.adrian.minishop.entity;
 
+import com.adrian.minishop.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
