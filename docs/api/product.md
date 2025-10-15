@@ -25,8 +25,10 @@ None
       "price": 123.45,
       "stock": 10,
       "image_url": "foo/bar.png",
-      "category_id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
-      "category_name": "Furniture",
+      "category": {
+        "id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
+        "name": "Furniture"
+      },
       "created_at": "2025-10-13T09:00:00",
       "updated_at": "2025-10-13T09:00:00"
     },
@@ -36,8 +38,10 @@ None
       "price": 123.45,
       "stock": 10,
       "image_url": "foo/bar.png",
-      "category_id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
-      "category_name": "Furniture",
+      "category": {
+        "id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
+        "name": "Furniture"
+      },
       "created_at": "2025-10-13T09:00:00",
       "updated_at": "2025-10-13T09:00:00"
     }
@@ -83,8 +87,10 @@ None
     "price": 123.45,
     "stock": 10,
     "image_url": "foo/bar.png",
-    "category_id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
-    "category_name": "Furniture",
+    "category": {
+      "id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
+      "name": "Furniture"
+    },
     "created_at": "2025-10-13T09:00:00",
     "updated_at": "2025-10-13T09:00:00"
   }
@@ -149,8 +155,10 @@ None
     "price": 123.45,
     "stock": 10,
     "image_url": "foo/bar.png",
-    "category_id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
-    "category_name": "Furniture",
+    "category": {
+      "id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
+      "name": "Furniture"
+    },
     "created_at": "2025-10-13T09:00:00",
     "updated_at": "2025-10-13T09:00:00"
   }
@@ -229,8 +237,10 @@ None
     "price": 123.45,
     "stock": 10,
     "image_url": "foo/bar.png",
-    "category_id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
-    "category_name": "Furniture",
+    "category": {
+      "id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
+      "name": "Furniture"
+    },
     "created_at": "2025-10-13T09:00:00",
     "updated_at": "2025-10-13T09:00:00"
   }
