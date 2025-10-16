@@ -9,6 +9,8 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 @AllArgsConstructor
@@ -73,5 +75,11 @@ public class User extends BaseEntity {
             updatable = false
     )
     private Role role;
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            mappedBy = "orders"
+    )
+    private List<Order> orders;
 
 }

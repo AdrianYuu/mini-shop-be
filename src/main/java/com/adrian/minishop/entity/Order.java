@@ -1,11 +1,11 @@
 package com.adrian.minishop.entity;
 
+import com.adrian.minishop.enums.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -13,62 +13,46 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
-@Table(name = "products")
+@Table(name = "orders")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@SQLDelete(sql = "UPDATE products SET deleted_at = NOW() WHERE id = ?")
+@SQLDelete(sql = "UPDATE orders SET deleted_at = NOW() WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
-public class Product extends BaseEntity {
+public class Order extends BaseEntity {
 
     @Column(
-            name = "name",
-            length = 100,
-            nullable = false,
-            unique = false,
-            updatable = true
-    )
-    private String name;
-
-    @Column(
-            name = "price",
+            name = "total_price",
             precision = 10,
             scale = 2,
             nullable = false,
             unique = false,
-            updatable = true
+            updatable = false
     )
-    private BigDecimal price;
+    private BigDecimal totalPrice;
 
+    @Enumerated(EnumType.STRING)
     @Column(
-            name = "stock",
+            name = "status",
+            length = 10,
             nullable = false,
             unique = false,
             updatable = true
     )
-    private Integer stock;
-
-    @Column(
-            name = "image_key",
-            length = 100,
-            nullable = true,
-            unique = true,
-            updatable = true
-    )
-    private String imageKey;
+    private Status status;
 
     @ManyToOne(
             fetch = FetchType.LAZY
     )
     @JoinColumn(
-            name = "category_id",
+            name = "user_id",
             referencedColumnName = "id",
             nullable = false,
             unique = false,
-            updatable = true
+            updatable = false
     )
-    private ProductCategory category;
+    private User user;
 
     @OneToMany(
             fetch = FetchType.LAZY,
