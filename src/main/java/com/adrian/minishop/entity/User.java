@@ -6,10 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "users")
@@ -17,17 +15,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-public class User {
-
-    @Id
-    @Column(
-            name = "id",
-            length = 36,
-            nullable = false,
-            unique = true,
-            updatable = false
-    )
-    private String id;
+@SQLDelete(sql = "UPDATE users SET deleted_at = NOW() WHERE id = ?")
+@SQLRestriction("deleted_at IS NULL")
+public class User extends BaseEntity {
 
     @Column(
             name = "name",
@@ -83,31 +73,5 @@ public class User {
             updatable = false
     )
     private Role role;
-
-    @CreationTimestamp
-    @Column(
-            name = "created_at",
-            nullable = false,
-            unique = false,
-            updatable = false
-    )
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(
-            name = "updated_at",
-            nullable = false,
-            unique = false,
-            updatable = true
-    )
-    private LocalDateTime updatedAt;
-
-    @Column(
-            name = "deleted_at",
-            nullable = true,
-            unique = false,
-            updatable = true
-    )
-    private LocalDateTime deletedAt;
 
 }

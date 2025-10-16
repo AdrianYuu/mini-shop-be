@@ -5,10 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -17,17 +16,9 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ProductCategory {
-
-    @Id
-    @Column(
-            name = "id",
-            length = 36,
-            nullable = false,
-            unique = true,
-            updatable = false
-    )
-    private String id;
+@SQLDelete(sql = "UPDATE product_categories SET deleted_at = NOW() WHERE id = ?")
+@SQLRestriction("deleted_at IS NULL")
+public class ProductCategory extends BaseEntity {
 
     @Column(
             name = "name",
@@ -43,31 +34,5 @@ public class ProductCategory {
             mappedBy = "products"
     )
     private List<Product> products;
-
-    @CreationTimestamp
-    @Column(
-            name = "created_at",
-            nullable = false,
-            unique = false,
-            updatable = false
-    )
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(
-            name = "updated_at",
-            nullable = false,
-            unique = false,
-            updatable = true
-    )
-    private LocalDateTime updatedAt;
-
-    @Column(
-            name = "deleted_at",
-            nullable = true,
-            unique = false,
-            updatable = true
-    )
-    private LocalDateTime deletedAt;
 
 }
