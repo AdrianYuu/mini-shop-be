@@ -2,13 +2,17 @@
 
 ---
 
-## Get Products
+## Search Products
 - Method: GET
 - URL: /products
 - Headers:
     - None
 - Cookies:
     - token
+- Query Parameters:
+    - query (search by name)
+    - page (start from 1)
+    - size (default is 10)
 
 ### Payload
 ```text
@@ -45,7 +49,13 @@ None
       "created_at": "2025-10-13T09:00:00",
       "updated_at": "2025-10-13T09:00:00"
     }
-  ]
+  ],
+  "pagination": {
+    "page": 1,
+    "size": 10,
+    "total_pages": 10,
+    "total_elements": 100
+  }
 }
 ```
 
