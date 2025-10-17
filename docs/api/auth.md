@@ -27,7 +27,8 @@
     "name": "Adrian Yu",
     "email": "adrian.yu@gmail.com",
     "bio": null,
-    "image_url": null
+    "image_url": null,
+    "role": "USER"
   }  
 }
 ```
@@ -78,7 +79,8 @@
     "name": "Adrian Yu",
     "email": "adrian.yu@gmail.com",
     "bio": null,
-    "image_url": null
+    "image_url": null,
+    "role": "USER"
   }
 }
 ```
@@ -120,7 +122,8 @@ None
     "name": "Adrian Yu",
     "email": "adrian.yu@gmail.com",
     "bio": null,
-    "image_url": null
+    "image_url": null,
+    "role": "USER"
   }
 }
 ```
