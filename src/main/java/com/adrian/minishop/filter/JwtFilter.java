@@ -31,48 +31,23 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final UserRepository userRepository;
 
-    private final ObjectMapper objectMapper;
-
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        try {
-            String token = cookieUtil.getCookie(request, "token");
+        String token = cookieUtil.getCookie(request, "token");
 
-            boolean tokenValid = jwtUtil.validateToken(token);
+        boolean tokenValid = jwtUtil.validateToken(token);
 
-            if (token == null || !tokenValid) {
-                responseUtil.sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized");
-                return;
-            }
-
+        if (tokenValid) {
             String userId = jwtUtil.extractToken(token);
 
-            User user = userRepository.findById(userId)
-                    .orElse(null);
-
-            if (user == null) {
-                responseUtil.sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized");
-                return;
-            }
-
-            SecurityContextHolder.getContext().setAuthentication(
+            userRepository.findById(userId).ifPresent(user -> SecurityContextHolder.getContext().setAuthentication(
                     new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities())
-            );
-
-            filterChain.doFilter(request, response);
-        } catch (Exception ex) {
-            responseUtil.sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized");
+            ));
         }
-    }
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        return path.startsWith("/api/v1/auth/login") ||
-                path.startsWith("/api/v1/auth/register") ||
-                path.startsWith("/api/v1/auth/csrf");
+        filterChain.doFilter(request, response);
     }
 
 }

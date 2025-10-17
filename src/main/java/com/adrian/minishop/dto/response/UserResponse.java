@@ -1,5 +1,6 @@
 package com.adrian.minishop.dto.response;
 
+import com.adrian.minishop.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +21,7 @@ public final class UserResponse {
     private String bio;
 
     private String imageUrl;
+
+    private Role role;
 
 }
