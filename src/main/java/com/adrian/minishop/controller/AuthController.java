@@ -28,16 +28,19 @@ public class AuthController {
 
     private final CookieUtil cookieUtil;
 
-    @GetMapping(path = "/csrf")
+    @GetMapping(
+            path = "/csrf",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<WebResponse<CsrfResponse>> csrf(CsrfToken csrfToken) {
-        CsrfResponse csrfResponse = CsrfResponse.builder()
+        CsrfResponse response = CsrfResponse.builder()
                 .csrfToken(csrfToken.getToken())
                 .build();
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(WebResponse.<CsrfResponse>builder()
-                        .data(csrfResponse)
+                        .data(response)
                         .build());
     }
 
@@ -47,12 +50,12 @@ public class AuthController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<WebResponse<UserResponse>> register(@Valid @RequestBody RegisterRequest request) {
-        UserResponse userResponse = authService.register(request);
+        UserResponse response = authService.register(request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(WebResponse.<UserResponse>builder()
-                        .data(userResponse)
+                        .data(response)
                         .build());
     }
 
@@ -61,10 +64,10 @@ public class AuthController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<WebResponse<UserResponse>> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
-        UserResponse userResponse = authService.login(request);
+    public ResponseEntity<WebResponse<UserResponse>> login(@Valid @RequestBody LoginRequest request, HttpServletResponse httpServletResponse) {
+        UserResponse response = authService.login(request);
 
-        String token = authService.generateToken(userResponse.getId());
+        String token = authService.generateToken(response.getId());
 
         Long expiration = authService.getExpiration();
 
@@ -75,12 +78,12 @@ public class AuthController {
                 false,
                 "/");
 
-        response.addCookie(cookie);
+        httpServletResponse.addCookie(cookie);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(WebResponse.<UserResponse>builder()
-                        .data(userResponse)
+                        .data(response)
                         .build());
     }
 
@@ -89,17 +92,17 @@ public class AuthController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<WebResponse<UserResponse>> me(@AuthenticationPrincipal User user) {
-        UserResponse userResponse = authService.userToUserResponse(user);
+        UserResponse response = authService.userToUserResponse(user);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(WebResponse.<UserResponse>builder()
-                        .data(userResponse)
+                        .data(response)
                         .build());
     }
 
     @PostMapping(path = "/logout")
-    public ResponseEntity<WebResponse<?>> logout(HttpServletResponse response) {
+    public ResponseEntity<WebResponse<?>> logout(HttpServletResponse httpServletResponse) {
         Cookie cookie = cookieUtil.createCookie("token",
                 null,
                 0,
@@ -107,7 +110,7 @@ public class AuthController {
                 false,
                 "/");
 
-        response.addCookie(cookie);
+        httpServletResponse.addCookie(cookie);
 
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
