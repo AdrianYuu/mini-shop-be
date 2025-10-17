@@ -1,7 +1,6 @@
 package com.adrian.minishop.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,7 +9,6 @@ import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "order_items")
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter

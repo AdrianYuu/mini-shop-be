@@ -1,11 +1,9 @@
 package com.adrian.minishop.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -14,7 +12,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "products")
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -72,7 +69,7 @@ public class Product extends BaseEntity {
 
     @OneToMany(
             fetch = FetchType.LAZY,
-            mappedBy = "items"
+            mappedBy = "product"
     )
     private List<OrderItem> items;
 

@@ -21,7 +21,8 @@ public abstract class BaseEntity {
             length = 36,
             nullable = false,
             unique = true,
-            updatable = false
+            updatable = false,
+            columnDefinition = "CHAR(36)"
     )
     private String id;
 

@@ -1,7 +1,6 @@
 package com.adrian.minishop.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +11,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "product_categories")
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -31,7 +29,7 @@ public class ProductCategory extends BaseEntity {
 
     @OneToMany(
             fetch = FetchType.LAZY,
-            mappedBy = "products"
+            mappedBy = "category"
     )
     private List<Product> products;
 

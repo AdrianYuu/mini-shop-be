@@ -2,7 +2,6 @@ package com.adrian.minishop.entity;
 
 import com.adrian.minishop.enums.Status;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +13,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders")
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -56,7 +54,7 @@ public class Order extends BaseEntity {
 
     @OneToMany(
             fetch = FetchType.LAZY,
-            mappedBy = "items"
+            mappedBy = "order"
     )
     private List<OrderItem> items;
 
