@@ -5,7 +5,6 @@ import com.adrian.minishop.dto.request.RegisterRequest;
 import com.adrian.minishop.dto.response.UserResponse;
 import com.adrian.minishop.dto.response.WebResponse;
 import com.adrian.minishop.enums.Role;
-import com.adrian.minishop.repository.UserRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
@@ -49,10 +48,11 @@ public class AuthControllerTest {
     void shouldRegisterCreated_whenRequestIsValid() throws Exception {
         String[] csrfToken = testHelper.getCsrfToken();
 
-        RegisterRequest request = new RegisterRequest();
-        request.setName("Adrian Yu");
-        request.setEmail("adrian.yu@gmail.com");
-        request.setPassword("AdrianYu1!");
+        RegisterRequest request = RegisterRequest.builder()
+                .name("Adrian Yu")
+                .email("adrian.yu@gmail.com")
+                .password("AdrianYu1!")
+                .build();
 
         mockMvc.perform(
                 post("/api/v1/auth/register")
@@ -74,6 +74,10 @@ public class AuthControllerTest {
             assertNull(response.getData().getImageUrl());
             assertEquals(Role.USER, response.getData().getRole());
         });
+    }
+
+    void shouldRegisterBadRequest_when(){
+
     }
 
 }

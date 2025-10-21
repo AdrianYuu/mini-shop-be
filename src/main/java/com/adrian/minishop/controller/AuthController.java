@@ -68,7 +68,6 @@ public class AuthController {
         UserResponse response = authService.login(request);
 
         String token = authService.generateToken(response.getId());
-
         Long expiration = authService.getExpiration();
 
         Cookie cookie = cookieUtil.createCookie("token",

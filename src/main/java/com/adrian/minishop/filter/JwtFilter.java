@@ -27,8 +27,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final CookieUtil cookieUtil;
 
-    private final ResponseUtil responseUtil;
-
     private final UserRepository userRepository;
 
     @Override
