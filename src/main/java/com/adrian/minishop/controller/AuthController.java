@@ -32,14 +32,14 @@ public class AuthController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<WebResponse<?>> csrf(CsrfToken csrfToken, HttpServletResponse httpServletResponse) {
-        Cookie cookie = cookieUtil.createCookie("csrf-token",
+        Cookie csrfTokenCookie = cookieUtil.createCookie("csrf-token",
                 csrfToken.getToken(),
                 -1,
                 false,
                 false,
                 "/");
 
-        httpServletResponse.addCookie(cookie);
+        httpServletResponse.addCookie(csrfTokenCookie);
 
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
@@ -72,14 +72,14 @@ public class AuthController {
         String token = authService.generateToken(response.getId());
         Long expiration = authService.getExpiration();
 
-        Cookie cookie = cookieUtil.createCookie("token",
+        Cookie tokenCookie = cookieUtil.createCookie("token",
                 token,
                 (int) (expiration / 1000),
                 true,
                 false,
                 "/");
 
-        httpServletResponse.addCookie(cookie);
+        httpServletResponse.addCookie(tokenCookie);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
