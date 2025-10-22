@@ -37,7 +37,7 @@ public class User extends BaseEntity implements UserDetails {
             name = "email",
             length = 100,
             nullable = false,
-            unique = true,
+            unique = false,
             updatable = true
     )
     private String email;
@@ -64,7 +64,7 @@ public class User extends BaseEntity implements UserDetails {
             name = "image_key",
             length = 100,
             nullable = true,
-            unique = true,
+            unique = false,
             updatable = true
     )
     private String imageKey;

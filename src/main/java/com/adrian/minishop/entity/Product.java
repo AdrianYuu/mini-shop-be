@@ -50,7 +50,7 @@ public class Product extends BaseEntity {
             name = "image_key",
             length = 100,
             nullable = true,
-            unique = true,
+            unique = false,
             updatable = true
     )
     private String imageKey;
