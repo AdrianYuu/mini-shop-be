@@ -2,7 +2,6 @@ package com.adrian.minishop.controller;
 
 import com.adrian.minishop.dto.request.LoginRequest;
 import com.adrian.minishop.dto.request.RegisterRequest;
-import com.adrian.minishop.dto.response.CsrfResponse;
 import com.adrian.minishop.dto.response.UserResponse;
 import com.adrian.minishop.dto.response.WebResponse;
 import com.adrian.minishop.entity.User;
@@ -32,16 +31,19 @@ public class AuthController {
             path = "/csrf",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<WebResponse<CsrfResponse>> csrf(CsrfToken csrfToken) {
-        CsrfResponse response = CsrfResponse.builder()
-                .csrfToken(csrfToken.getToken())
-                .build();
+    public ResponseEntity<WebResponse<?>> csrf(CsrfToken csrfToken, HttpServletResponse httpServletResponse) {
+        Cookie cookie = cookieUtil.createCookie("csrf-token",
+                csrfToken.getToken(),
+                -1,
+                false,
+                false,
+                "/");
+
+        httpServletResponse.addCookie(cookie);
 
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(WebResponse.<CsrfResponse>builder()
-                        .data(response)
-                        .build());
+                .status(HttpStatus.NO_CONTENT)
+                .build();
     }
 
     @PostMapping(
@@ -91,7 +93,7 @@ public class AuthController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<WebResponse<UserResponse>> me(@AuthenticationPrincipal User user) {
-        UserResponse response = authService.userToUserResponse(user);
+        UserResponse response = authService.me(user);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -100,16 +102,35 @@ public class AuthController {
                         .build());
     }
 
-    @PostMapping(path = "/logout")
+    @PostMapping(
+            path = "/logout",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<WebResponse<?>> logout(HttpServletResponse httpServletResponse) {
-        Cookie cookie = cookieUtil.createCookie("token",
+        Cookie tokenCookie = cookieUtil.createCookie("token",
                 null,
                 0,
                 true,
                 false,
                 "/");
 
-        httpServletResponse.addCookie(cookie);
+        Cookie csrfTokenCookie = cookieUtil.createCookie("csrf-token",
+                null,
+                0,
+                true,
+                false,
+                "/");
+
+        Cookie springCsrfTokenCookie = cookieUtil.createCookie("XSRF-TOKEN",
+                null,
+                0,
+                true,
+                false,
+                "/");
+
+        httpServletResponse.addCookie(tokenCookie);
+        httpServletResponse.addCookie(csrfTokenCookie);
+        httpServletResponse.addCookie(springCsrfTokenCookie);
 
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)

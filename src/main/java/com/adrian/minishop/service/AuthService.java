@@ -48,7 +48,7 @@ public class AuthService {
 
         User savedUser = userRepository.save(user);
 
-        return userToUserResponse(savedUser);
+        return userMapper.userToUserResponse(savedUser);
     }
 
     public UserResponse login(LoginRequest request) {
@@ -61,10 +61,10 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
 
-        return userToUserResponse(user);
+        return userMapper.userToUserResponse(user);
     }
 
-    public UserResponse userToUserResponse(User user) {
+    public UserResponse me(User user) {
         return userMapper.userToUserResponse(user);
     }
 

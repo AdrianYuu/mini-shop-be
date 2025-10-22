@@ -1,26 +1,23 @@
 package com.adrian.minishop;
 
-import com.adrian.minishop.dto.response.CsrfResponse;
+import com.adrian.minishop.dto.request.LoginRequest;
 import com.adrian.minishop.dto.response.WebResponse;
 import com.adrian.minishop.entity.User;
 import com.adrian.minishop.enums.Role;
 import com.adrian.minishop.repository.UserRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Random;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.MockMvcBuilder.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 
 @Component
 @RequiredArgsConstructor
@@ -37,27 +34,48 @@ public class TestHelper {
     public String[] getCsrfToken() throws Exception {
         var result = mockMvc.perform(
                 get("/api/v1/auth/csrf")
+        ).andExpectAll(
+                status().isNoContent()
+        ).andReturn();
+
+        Cookie csrfTokenCookie = result.getResponse().getCookie("csrf-token");
+        Cookie springCsrfTokenCookie = result.getResponse().getCookie("XSRF-TOKEN");
+
+        return new String[]{
+                csrfTokenCookie != null ? csrfTokenCookie.getValue() : "",
+                springCsrfTokenCookie != null ? springCsrfTokenCookie.getValue() : ""
+        };
+    }
+
+    public String getToken() throws Exception {
+        String[] csrfToken = getCsrfToken();
+
+        LoginRequest request = LoginRequest.builder()
+                .email("adrian@gmail.com")
+                .password("Ayu123456!")
+                .build();
+
+        var result = mockMvc.perform(
+                post("/api/v1/auth/login")
+                        .header("X-XSRF-TOKEN", csrfToken[0])
+                        .cookie(new Cookie("XSRF-TOKEN", csrfToken[1]))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(request))
         ).andExpectAll(
                 status().isOk()
         ).andReturn();
 
-        WebResponse<CsrfResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
-        });
+        Cookie cookie = result.getResponse().getCookie("token");
 
-        var cookie = result.getResponse().getCookie("XSRF-TOKEN");
-
-        String csrfTokenFromResponseBody = response.getData().getCsrfToken();
-        String csrfTokenFromCookie = cookie != null ? cookie.getValue() : null;
-
-        return new String[]{csrfTokenFromResponseBody, csrfTokenFromCookie};
+        return cookie != null ? cookie.getValue() : null;
     }
 
     public void deleteAllUser() {
         userRepository.deleteAll();
     }
 
-    public User createUser() {
+    public void createUser() {
         User user = new User();
         user.setId(UUID.randomUUID().toString());
         user.setName("Adrian Yu");
@@ -68,8 +86,10 @@ public class TestHelper {
         user.setRole(Role.USER);
 
         userRepository.save(user);
+    }
 
-        return user;
+    public User getUser() {
+        return userRepository.findFirstByEmail("adrian@gmail.com").orElse(null);
     }
 
 }

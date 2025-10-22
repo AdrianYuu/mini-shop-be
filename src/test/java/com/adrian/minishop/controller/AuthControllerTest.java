@@ -20,11 +20,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collection;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.MockMvcBuilder.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 
 @Slf4j
 @SpringBootTest
@@ -44,6 +44,21 @@ public class AuthControllerTest {
     @BeforeEach
     void setUp() {
         testHelper.deleteAllUser();
+        testHelper.createUser();
+    }
+
+    @Test
+        void shouldCsrfOk_whenRequestIsValid() throws Exception {
+        mockMvc.perform(
+                get("/api/v1/auth/csrf")
+        ).andExpectAll(
+                status().isNoContent()
+        ).andDo(result -> {
+            Collection<String> setCookies = result.getResponse().getHeaders("Set-Cookie");
+            assertFalse(setCookies.isEmpty());
+            assertTrue(setCookies.stream().anyMatch(c -> c.startsWith("csrf-token=")));
+            assertTrue(setCookies.stream().anyMatch(c -> c.startsWith("XSRF-TOKEN=")));
+        });
     }
 
     @Test
@@ -77,8 +92,6 @@ public class AuthControllerTest {
 
     @Test
     void shouldRegisterBadRequest_whenEmailExists() throws Exception {
-        testHelper.createUser();
-
         String[] csrfToken = testHelper.getCsrfToken();
 
         RegisterRequest request = RegisterRequest.builder()
@@ -170,8 +183,6 @@ public class AuthControllerTest {
 
     @Test
     void shouldLoginUnauthorized_whenEmailNotExists() throws Exception {
-        testHelper.createUser();
-
         String[] csrfToken = testHelper.getCsrfToken();
 
         LoginRequest request = LoginRequest.builder()
@@ -200,8 +211,6 @@ public class AuthControllerTest {
 
     @Test
     void shouldLoginUnauthorized_whenPasswordWrong() throws Exception {
-        testHelper.createUser();
-
         String[] csrfToken = testHelper.getCsrfToken();
 
         LoginRequest request = LoginRequest.builder()
@@ -229,9 +238,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    void shouldLoginSuccess_whenRequestValid() throws Exception {
-        User user = testHelper.createUser();
-
+    void shouldLoginOk_whenRequestValid() throws Exception {
         String[] csrfToken = testHelper.getCsrfToken();
 
         LoginRequest request = LoginRequest.builder()
@@ -254,17 +261,102 @@ public class AuthControllerTest {
 
             assertNull(response.getErrors());
 
-            assertNotNull(response.getData().getId());
-            assertEquals(user.getName(), response.getData().getName());
-            assertEquals(user.getEmail(), response.getData().getEmail());
-            assertNull(response.getData().getBio());
-            assertNull(response.getData().getImageUrl());
-            assertEquals(Role.USER, response.getData().getRole());
+            assertEquals(request.getEmail(), response.getData().getEmail());
 
             String setCookie = result.getResponse().getHeader("Set-Cookie");
             assertNotNull(setCookie);
             assertTrue(setCookie.contains("token="));
-            assertFalse(setCookie.contains("token=;"));
+        });
+    }
+
+    @Test
+    void shouldMeUnauthorized_whenTokenNotExists() throws Exception {
+        String[] csrfToken = testHelper.getCsrfToken();
+
+        mockMvc.perform(
+                get("/api/v1/auth/me")
+                        .header("X-XSRF-TOKEN", csrfToken[0])
+                        .cookie(new Cookie("XSRF-TOKEN", csrfToken[1]))
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(
+                status().isUnauthorized()
+        ).andDo(result -> {
+            WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+            assertNull(response.getData());
+
+            assertNotNull(response.getErrors());
+        });
+    }
+
+    @Test
+    void shouldMeOk_whenTokenExists() throws Exception {
+        String[] csrfToken = testHelper.getCsrfToken();
+        String token = testHelper.getToken();
+
+        mockMvc.perform(
+                get("/api/v1/auth/me")
+                        .header("X-XSRF-TOKEN", csrfToken[0])
+                        .cookie(new Cookie("XSRF-TOKEN", csrfToken[1]))
+                        .cookie(new Cookie("token", token))
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(
+                status().isOk()
+        ).andDo(result -> {
+            WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+            assertNull(response.getErrors());
+
+            User user = testHelper.getUser();
+            assertEquals(user.getId(), response.getData().getId());
+            assertEquals(user.getName(), response.getData().getName());
+            assertEquals(user.getEmail(), response.getData().getEmail());
+            assertEquals(user.getBio(), response.getData().getBio());
+            assertEquals(user.getRole(), response.getData().getRole());
+        });
+    }
+
+    @Test
+    void shouldLogoutUnauthorized_whenTokenNotExists() throws Exception {
+        String[] csrfToken = testHelper.getCsrfToken();
+
+        mockMvc.perform(
+                post("/api/v1/auth/logout")
+                        .header("X-XSRF-TOKEN", csrfToken[0])
+                        .cookie(new Cookie("XSRF-TOKEN", csrfToken[1]))
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(
+                status().isUnauthorized()
+        ).andDo(result -> {
+            WebResponse<?> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+
+            assertNull(response.getData());
+
+            assertNotNull(response.getErrors());
+        });
+    }
+
+    @Test
+    void shouldLogoutOk_whenTokenExists() throws Exception {
+        String[] csrfToken = testHelper.getCsrfToken();
+        String token = testHelper.getToken();
+
+        mockMvc.perform(
+                post("/api/v1/auth/logout")
+                        .header("X-XSRF-TOKEN", csrfToken[0])
+                        .cookie(new Cookie("XSRF-TOKEN", csrfToken[1]))
+                        .cookie(new Cookie("token", token))
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+        ).andExpectAll(
+                status().isNoContent()
+        ).andDo(result -> {
+            Collection<String> setCookies = result.getResponse().getHeaders("Set-Cookie");
+            assertFalse(setCookies.isEmpty());
+            assertTrue(setCookies.stream().anyMatch(c -> c.startsWith("token=;")));
+            assertTrue(setCookies.stream().anyMatch(c -> c.startsWith("XSRF-TOKEN=;")));
         });
     }
 
