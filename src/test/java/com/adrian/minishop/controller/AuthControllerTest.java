@@ -48,22 +48,21 @@ public class AuthControllerTest {
     }
 
     @Test
-        void shouldCsrfOk_whenRequestIsValid() throws Exception {
+    void shouldCsrfOk_whenRequestIsValid() throws Exception {
         mockMvc.perform(
                 get("/api/v1/auth/csrf")
         ).andExpectAll(
                 status().isNoContent()
         ).andDo(result -> {
-            Collection<String> setCookies = result.getResponse().getHeaders("Set-Cookie");
-            assertFalse(setCookies.isEmpty());
-            assertTrue(setCookies.stream().anyMatch(c -> c.startsWith("csrf-token=")));
-            assertTrue(setCookies.stream().anyMatch(c -> c.startsWith("XSRF-TOKEN=")));
+            String setCookie = result.getResponse().getHeader("Set-Cookie");
+            assertNotNull(setCookie);
+            assertTrue(setCookie.contains("XSRF-TOKEN="));
         });
     }
 
     @Test
     void shouldRegisterBadRequest_whenRequestInvalid() throws Exception {
-        String[] csrfToken = testHelper.getCsrfToken();
+        String csrfToken = testHelper.getCsrfToken();
 
         RegisterRequest request = RegisterRequest.builder()
                 .name("")
@@ -73,8 +72,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/register")
-                        .header("X-XSRF-TOKEN", csrfToken[0])
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken[1]))
+                        .header("X-XSRF-TOKEN", csrfToken)
+                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -92,7 +91,7 @@ public class AuthControllerTest {
 
     @Test
     void shouldRegisterBadRequest_whenEmailExists() throws Exception {
-        String[] csrfToken = testHelper.getCsrfToken();
+        String csrfToken = testHelper.getCsrfToken();
 
         RegisterRequest request = RegisterRequest.builder()
                 .name("Adrian Yu")
@@ -102,8 +101,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/register")
-                        .header("X-XSRF-TOKEN", csrfToken[0])
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken[1]))
+                        .header("X-XSRF-TOKEN", csrfToken)
+                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -121,7 +120,7 @@ public class AuthControllerTest {
 
     @Test
     void shouldRegisterCreated_whenRequestValid() throws Exception {
-        String[] csrfToken = testHelper.getCsrfToken();
+        String csrfToken = testHelper.getCsrfToken();
 
         RegisterRequest request = RegisterRequest.builder()
                 .name("Adrian Yu")
@@ -131,8 +130,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/register")
-                        .header("X-XSRF-TOKEN", csrfToken[0])
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken[1]))
+                        .header("X-XSRF-TOKEN", csrfToken)
+                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -155,7 +154,7 @@ public class AuthControllerTest {
 
     @Test
     void shouldLoginBadRequest_whenRequestInvalid() throws Exception {
-        String[] csrfToken = testHelper.getCsrfToken();
+        String csrfToken = testHelper.getCsrfToken();
 
         LoginRequest request = LoginRequest.builder()
                 .email("")
@@ -164,8 +163,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/login")
-                        .header("X-XSRF-TOKEN", csrfToken[0])
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken[1]))
+                        .header("X-XSRF-TOKEN", csrfToken)
+                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -183,7 +182,7 @@ public class AuthControllerTest {
 
     @Test
     void shouldLoginUnauthorized_whenEmailNotExists() throws Exception {
-        String[] csrfToken = testHelper.getCsrfToken();
+        String csrfToken = testHelper.getCsrfToken();
 
         LoginRequest request = LoginRequest.builder()
                 .email("adrian123@gmail.com")
@@ -192,8 +191,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/login")
-                        .header("X-XSRF-TOKEN", csrfToken[0])
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken[1]))
+                        .header("X-XSRF-TOKEN", csrfToken)
+                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -211,7 +210,7 @@ public class AuthControllerTest {
 
     @Test
     void shouldLoginUnauthorized_whenPasswordWrong() throws Exception {
-        String[] csrfToken = testHelper.getCsrfToken();
+        String csrfToken = testHelper.getCsrfToken();
 
         LoginRequest request = LoginRequest.builder()
                 .email("adrian@gmail.com")
@@ -220,8 +219,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/login")
-                        .header("X-XSRF-TOKEN", csrfToken[0])
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken[1]))
+                        .header("X-XSRF-TOKEN", csrfToken)
+                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -239,7 +238,7 @@ public class AuthControllerTest {
 
     @Test
     void shouldLoginOk_whenRequestValid() throws Exception {
-        String[] csrfToken = testHelper.getCsrfToken();
+        String csrfToken = testHelper.getCsrfToken();
 
         LoginRequest request = LoginRequest.builder()
                 .email("adrian@gmail.com")
@@ -248,8 +247,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/login")
-                        .header("X-XSRF-TOKEN", csrfToken[0])
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken[1]))
+                        .header("X-XSRF-TOKEN", csrfToken)
+                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -271,12 +270,12 @@ public class AuthControllerTest {
 
     @Test
     void shouldMeUnauthorized_whenTokenNotExists() throws Exception {
-        String[] csrfToken = testHelper.getCsrfToken();
+        String csrfToken = testHelper.getCsrfToken();
 
         mockMvc.perform(
                 get("/api/v1/auth/me")
-                        .header("X-XSRF-TOKEN", csrfToken[0])
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken[1]))
+                        .header("X-XSRF-TOKEN", csrfToken)
+                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
         ).andExpectAll(
                 status().isUnauthorized()
@@ -292,13 +291,13 @@ public class AuthControllerTest {
 
     @Test
     void shouldMeOk_whenTokenExists() throws Exception {
-        String[] csrfToken = testHelper.getCsrfToken();
+        String csrfToken = testHelper.getCsrfToken();
         String token = testHelper.getToken();
 
         mockMvc.perform(
                 get("/api/v1/auth/me")
-                        .header("X-XSRF-TOKEN", csrfToken[0])
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken[1]))
+                        .header("X-XSRF-TOKEN", csrfToken)
+                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
                         .cookie(new Cookie("token", token))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
         ).andExpectAll(
@@ -320,12 +319,12 @@ public class AuthControllerTest {
 
     @Test
     void shouldLogoutUnauthorized_whenTokenNotExists() throws Exception {
-        String[] csrfToken = testHelper.getCsrfToken();
+        String csrfToken = testHelper.getCsrfToken();
 
         mockMvc.perform(
                 post("/api/v1/auth/logout")
-                        .header("X-XSRF-TOKEN", csrfToken[0])
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken[1]))
+                        .header("X-XSRF-TOKEN", csrfToken)
+                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
         ).andExpectAll(
                 status().isUnauthorized()
@@ -341,13 +340,13 @@ public class AuthControllerTest {
 
     @Test
     void shouldLogoutOk_whenTokenExists() throws Exception {
-        String[] csrfToken = testHelper.getCsrfToken();
+        String csrfToken = testHelper.getCsrfToken();
         String token = testHelper.getToken();
 
         mockMvc.perform(
                 post("/api/v1/auth/logout")
-                        .header("X-XSRF-TOKEN", csrfToken[0])
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken[1]))
+                        .header("X-XSRF-TOKEN", csrfToken)
+                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
                         .cookie(new Cookie("token", token))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
         ).andExpectAll(

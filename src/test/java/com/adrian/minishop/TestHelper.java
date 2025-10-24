@@ -31,24 +31,20 @@ public class TestHelper {
 
     private final PasswordEncoder passwordEncoder;
 
-    public String[] getCsrfToken() throws Exception {
+    public String getCsrfToken() throws Exception {
         var result = mockMvc.perform(
                 get("/api/v1/auth/csrf")
         ).andExpectAll(
                 status().isNoContent()
         ).andReturn();
 
-        Cookie csrfTokenCookie = result.getResponse().getCookie("csrf-token");
-        Cookie springCsrfTokenCookie = result.getResponse().getCookie("XSRF-TOKEN");
+        Cookie csrfTokenCookie = result.getResponse().getCookie("XSRF-TOKEN");
 
-        return new String[]{
-                csrfTokenCookie != null ? csrfTokenCookie.getValue() : "",
-                springCsrfTokenCookie != null ? springCsrfTokenCookie.getValue() : ""
-        };
+        return csrfTokenCookie != null ? csrfTokenCookie.getValue() : "";
     }
 
     public String getToken() throws Exception {
-        String[] csrfToken = getCsrfToken();
+        String csrfToken = getCsrfToken();
 
         LoginRequest request = LoginRequest.builder()
                 .email("adrian@gmail.com")
@@ -57,8 +53,8 @@ public class TestHelper {
 
         var result = mockMvc.perform(
                 post("/api/v1/auth/login")
-                        .header("X-XSRF-TOKEN", csrfToken[0])
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken[1]))
+                        .header("X-XSRF-TOKEN", csrfToken)
+                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))

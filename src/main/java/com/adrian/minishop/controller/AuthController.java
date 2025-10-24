@@ -28,19 +28,10 @@ public class AuthController {
     private final CookieUtil cookieUtil;
 
     @GetMapping(
-            path = "/csrf",
-            produces = MediaType.APPLICATION_JSON_VALUE
+            path = "/csrf"
     )
-    public ResponseEntity<WebResponse<?>> csrf(CsrfToken csrfToken, HttpServletResponse httpServletResponse) {
-        Cookie csrfTokenCookie = cookieUtil.createCookie("csrf-token",
-                csrfToken.getToken(),
-                -1,
-                false,
-                false,
-                "/");
-
-        httpServletResponse.addCookie(csrfTokenCookie);
-
+    public ResponseEntity<WebResponse<?>> csrf(CsrfToken csrfToken) {
+        csrfToken.getToken();
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
