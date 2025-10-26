@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UpdateUserInformationRequest {
+public final class UpdateUserInformationRequest {
 
     @Size(
             min = 3,

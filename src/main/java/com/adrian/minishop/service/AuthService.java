@@ -64,10 +64,6 @@ public class AuthService {
         return userMapper.userToUserResponse(user);
     }
 
-    public UserResponse me(User user) {
-        return userMapper.userToUserResponse(user);
-    }
-
     public String generateToken(String userId) {
         return jwtUtil.generateToken(userId);
     }

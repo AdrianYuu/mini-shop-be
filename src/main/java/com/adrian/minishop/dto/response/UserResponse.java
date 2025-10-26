@@ -20,7 +20,7 @@ public final class UserResponse {
 
     private String bio;
 
-    private String imageUrl;
+    private String imageKey;
 
     private Role role;
 

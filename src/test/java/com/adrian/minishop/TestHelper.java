@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -40,7 +41,7 @@ public class TestHelper {
 
         Cookie csrfTokenCookie = result.getResponse().getCookie("XSRF-TOKEN");
 
-        return csrfTokenCookie != null ? csrfTokenCookie.getValue() : "";
+        return Objects.nonNull(csrfTokenCookie) ? csrfTokenCookie.getValue() : "";
     }
 
     public String getToken() throws Exception {

@@ -22,6 +22,10 @@ public class UserService {
 
     private final MinioService minioService;
 
+    public UserResponse me(User user) {
+        return userMapper.userToUserResponse(user);
+    }
+
     @Transactional
     public UserResponse updateUserInformation(User user, UpdateUserInformationRequest request) {
         if (Objects.nonNull(request.getName())) {
@@ -31,10 +35,18 @@ public class UserService {
         if (Objects.nonNull(request.getBio())) {
             user.setBio(request.getBio());
         }
+        if (Objects.nonNull(request.getImage())) {
+            if (Objects.nonNull(user.getImageKey())) {
+                minioService.removeFile(user.getImageKey());
+            }
 
-//        if (Objects.nonNull(request.getImage())) {
-//        }
-        return null;
+            String key = minioService.uploadFile(request.getImage(), minioService.getUserBucket());
+            user.setImageKey(key);
+        }
+
+        userRepository.save(user);
+
+        return userMapper.userToUserResponse(user);
     }
 
 }

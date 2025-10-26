@@ -79,20 +79,6 @@ public class AuthController {
                         .build());
     }
 
-    @GetMapping(
-            path = "/me",
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<WebResponse<UserResponse>> me(@AuthenticationPrincipal User user) {
-        UserResponse response = authService.me(user);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(WebResponse.<UserResponse>builder()
-                        .data(response)
-                        .build());
-    }
-
     @PostMapping(
             path = "/logout",
             produces = MediaType.APPLICATION_JSON_VALUE

@@ -1,9 +1,8 @@
 package com.adrian.minishop.service;
 
-import io.minio.BucketExistsArgs;
-import io.minio.MakeBucketArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import com.adrian.minishop.exception.FileStorageException;
+import io.minio.*;
+import io.minio.http.Method;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Getter
 public class MinioService {
 
     private final MinioClient minioClient;
@@ -51,28 +52,58 @@ public class MinioService {
         }
     }
 
-    public String uploadFile(MultipartFile file, String bucketName) throws Exception {
-        InputStream inputStream = file.getInputStream();
-        String originalFilename = file.getOriginalFilename();
-        String extension = (originalFilename != null && originalFilename.contains("."))
-                ? originalFilename.substring(originalFilename.lastIndexOf('.'))
-                : "";
-        String objectName = UUID.randomUUID() + extension;
+    public String uploadFile(MultipartFile file, String bucketName) {
+        try {
+            InputStream inputStream = file.getInputStream();
+            String originalFilename = file.getOriginalFilename();
+            String extension = (originalFilename != null && originalFilename.contains("."))
+                    ? originalFilename.substring(originalFilename.lastIndexOf('.'))
+                    : "";
+            String objectName = UUID.randomUUID() + extension;
 
-        minioClient.putObject(
-                PutObjectArgs.builder()
-                        .bucket(bucketName)
-                        .object(objectName)
-                        .stream(inputStream, file.getSize(), -1)
-                        .contentType(file.getContentType())
-                        .build()
-        );
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .stream(inputStream, file.getSize(), -1)
+                            .contentType(file.getContentType())
+                            .build()
+            );
 
-        return String.format("%s/%s", bucketName, objectName);
+            return String.format("%s/%s", bucketName, objectName);
+        } catch (Exception e) {
+            throw new FileStorageException("Upload file failed", e);
+        }
     }
 
-    public String getFileUrl(String key) {
-        return url + "key";
+    public String getPresignedUrl(String bucketName, String objectName, int expirySeconds) {
+        try {
+            return minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .expiry(expirySeconds, TimeUnit.SECONDS)
+                            .build()
+            );
+        } catch (Exception e) {
+            throw new FileStorageException("Get presigned url failed", e);
+        }
+    }
+
+    public void removeFile(String key) {
+        try {
+            String[] parts = key.split("/", 2);
+
+            minioClient.removeObject(
+                    RemoveObjectArgs.builder()
+                            .bucket(parts[0])
+                            .object(parts[1])
+                            .build()
+            );
+        } catch (Exception e) {
+            throw new FileStorageException("Remove file failed", e);
+        }
     }
 
 }
