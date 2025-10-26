@@ -12,7 +12,7 @@ public class FileService {
     private final MinioService minioService;
 
     public FileResponse get(FileRequest request) {
-        String presignedUrl = minioService.getPresignedUrl(request.getBucket(), request.getObjectName(), 3600);
+        String presignedUrl = minioService.getPresignedUrl(request.getBucketName(), request.getObjectName(), 3600);
 
         return FileResponse.builder()
                 .presignedUrl(presignedUrl)

@@ -20,14 +20,14 @@ public class FileController {
     private final FileService fileService;
 
     @GetMapping(
-            path = "/{bucket}/{objectName}"
+            path = "/{bucketName}/{objectName}"
     )
     public ResponseEntity<WebResponse<?>> get(
-            @PathVariable("bucket") String bucket,
+            @PathVariable("bucketName") String bucketName,
             @PathVariable("objectName") String objectName
     ) {
         FileRequest request = FileRequest.builder()
-                .bucket(bucket)
+                .bucketName(bucketName)
                 .objectName(objectName)
                 .build();
 

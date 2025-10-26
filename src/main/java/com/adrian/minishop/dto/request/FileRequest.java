@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public final class FileRequest {
 
-    @NotBlank(message = "Bucket is required")
-    private String bucket;
+    @NotBlank(message = "Bucket name is required")
+    private String bucketName;
 
     @NotBlank(message = "Object name is required")
     private String objectName;
