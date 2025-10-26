@@ -32,23 +32,23 @@ public class MinioService {
 
     @PostConstruct
     public void init() {
-        try {
-            ensureBucket(userBucket);
-            ensureBucket(productBucket);
-        } catch (Exception e) {
-            throw new IllegalStateException("Minio error", e);
-        }
+        ensureBucket(userBucket);
+        ensureBucket(productBucket);
     }
 
-    public void ensureBucket(String bucketName) throws Exception {
-        boolean isBucketExists = minioClient.bucketExists(BucketExistsArgs.builder()
-                .bucket(bucketName)
-                .build());
-
-        if (!isBucketExists) {
-            minioClient.makeBucket(MakeBucketArgs.builder()
+    public void ensureBucket(String bucketName) {
+        try {
+            boolean isBucketExists = minioClient.bucketExists(BucketExistsArgs.builder()
                     .bucket(bucketName)
                     .build());
+
+            if (!isBucketExists) {
+                minioClient.makeBucket(MakeBucketArgs.builder()
+                        .bucket(bucketName)
+                        .build());
+            }
+        } catch (Exception e) {
+            throw new FileStorageException("Ensure bucket failed", e);
         }
     }
 
