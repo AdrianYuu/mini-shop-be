@@ -26,7 +26,7 @@ public class MinioService {
     @Value("${minio.buckets.user}")
     private String userBucket;
 
-    @Value("${minip.buckets.product}")
+    @Value("${minio.buckets.product}")
     private String productBucket;
 
     @PostConstruct
