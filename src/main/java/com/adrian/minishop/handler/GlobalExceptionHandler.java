@@ -40,6 +40,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<WebResponse<?>> responseStatusException(ResponseStatusException e) {
+        assert e.getReason() != null;
         return ResponseEntity
                 .status(e.getStatusCode())
                 .body(WebResponse.builder()

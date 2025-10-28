@@ -4,7 +4,6 @@ import com.adrian.minishop.dto.request.LoginRequest;
 import com.adrian.minishop.dto.request.RegisterRequest;
 import com.adrian.minishop.dto.response.UserResponse;
 import com.adrian.minishop.dto.response.WebResponse;
-import com.adrian.minishop.entity.User;
 import com.adrian.minishop.service.AuthService;
 import com.adrian.minishop.util.CookieUtil;
 import jakarta.servlet.http.Cookie;
@@ -14,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 

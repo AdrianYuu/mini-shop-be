@@ -5,7 +5,6 @@ import com.adrian.minishop.dto.response.UserResponse;
 import com.adrian.minishop.entity.User;
 import com.adrian.minishop.mapper.UserMapper;
 import com.adrian.minishop.repository.UserRepository;
-import io.minio.MinioClient;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

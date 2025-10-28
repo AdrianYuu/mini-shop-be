@@ -147,7 +147,7 @@ public class AuthControllerTest {
             assertEquals(request.getName(), response.getData().getName());
             assertEquals(request.getEmail(), response.getData().getEmail());
             assertNull(response.getData().getBio());
-            assertNull(response.getData().getImageUrl());
+            assertNull(response.getData().getImageKey());
             assertEquals(Role.USER, response.getData().getRole());
         });
     }
@@ -295,7 +295,7 @@ public class AuthControllerTest {
         String token = testHelper.getToken();
 
         mockMvc.perform(
-                get("/api/v1/auth/me")
+                get("/api/v1/users/me")
                         .header("X-XSRF-TOKEN", csrfToken)
                         .cookie(new Cookie("XSRF-TOKEN", csrfToken))
                         .cookie(new Cookie("token", token))
@@ -313,6 +313,7 @@ public class AuthControllerTest {
             assertEquals(user.getName(), response.getData().getName());
             assertEquals(user.getEmail(), response.getData().getEmail());
             assertEquals(user.getBio(), response.getData().getBio());
+            assertEquals(user.getImageKey(), response.getData().getImageKey());
             assertEquals(user.getRole(), response.getData().getRole());
         });
     }
