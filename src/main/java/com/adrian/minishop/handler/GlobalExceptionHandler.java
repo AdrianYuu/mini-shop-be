@@ -6,7 +6,6 @@ import com.adrian.minishop.exception.FileStorageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -19,6 +18,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    // @Valid
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<WebResponse<?>> methodArgumentNotValidException(MethodArgumentNotValidException e) {
         return ResponseEntity
@@ -39,6 +39,7 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
+    // Throw in Service
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<WebResponse<?>> responseStatusException(ResponseStatusException e) {
         String reason = Optional.ofNullable(e.getReason())
@@ -57,38 +58,32 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
-    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<WebResponse<?>> httpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException e) {
-        return ResponseEntity
-                .status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-                .body(WebResponse.builder()
-                        .errors(List.of(
-                                ErrorResponse.builder()
-                                        .field("general")
-                                        .messages(List.of("Content-Type is not supported"))
-                                        .build()
-                        ))
-                        .build());
-    }
-
+    // File Storage Exception
     @ExceptionHandler(FileStorageException.class)
-    public ResponseEntity<WebResponse<?>> handleFileStorageException(FileStorageException e) {
+    public ResponseEntity<WebResponse<?>> fileStorageException(FileStorageException e) {
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .status(e.getHttpStatus())
                 .body(WebResponse.builder()
                         .errors(List.of(
                                 ErrorResponse.builder()
                                         .field("general")
-                                        .messages(List.of("File storage error"))
+                                        .messages(List.of(e.getMessage()))
                                         .build()
                         ))
                         .build());
     }
 
+    // Other Exception
     @ExceptionHandler(Exception.class)
     public ResponseEntity<WebResponse<?>> exception(Exception e) {
+        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        if (e instanceof org.springframework.web.ErrorResponse errorResponse) {
+            httpStatus = HttpStatus.valueOf(errorResponse.getStatusCode().value());
+        }
+
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .status(httpStatus)
                 .body(WebResponse.builder()
                         .errors(List.of(
                                 ErrorResponse.builder()

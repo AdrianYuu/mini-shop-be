@@ -1,15 +1,19 @@
 package com.adrian.minishop.service;
 
 import com.adrian.minishop.exception.FileStorageException;
+import com.adrian.minishop.util.FileUtil;
 import io.minio.*;
+import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -30,35 +34,37 @@ public class MinioService {
     @Value("${minio.buckets.product}")
     private String productBucket;
 
+    private final FileUtil fileUtil;
+
     @PostConstruct
     public void init() {
-        ensureBucket(userBucket);
-        ensureBucket(productBucket);
+        ensureBucketExists(userBucket);
+        ensureBucketExists(productBucket);
     }
 
-    public void ensureBucket(String bucketName) {
+    private void ensureBucketExists(String bucketName) {
         try {
-            boolean isBucketExists = minioClient.bucketExists(BucketExistsArgs.builder()
+            boolean exists = minioClient.bucketExists(BucketExistsArgs.builder()
                     .bucket(bucketName)
                     .build());
 
-            if (!isBucketExists) {
+            if (!exists) {
                 minioClient.makeBucket(MakeBucketArgs.builder()
                         .bucket(bucketName)
                         .build());
             }
         } catch (Exception e) {
-            throw new FileStorageException("Ensure bucket failed", e);
+            throw new FileStorageException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to ensure bucket: " + bucketName);
         }
     }
 
     public String uploadFile(MultipartFile file, String bucketName) {
-        try {
-            InputStream inputStream = file.getInputStream();
-            String originalFilename = file.getOriginalFilename();
-            String extension = (originalFilename != null && originalFilename.contains("."))
-                    ? originalFilename.substring(originalFilename.lastIndexOf('.'))
-                    : "";
+        if (file == null || file.isEmpty()) {
+            throw new FileStorageException(HttpStatus.BAD_REQUEST, "File is required");
+        }
+
+        try (InputStream inputStream = file.getInputStream()) {
+            String extension = fileUtil.getFileExtension(file.getOriginalFilename());
             String objectName = UUID.randomUUID() + extension;
 
             minioClient.putObject(
@@ -70,9 +76,13 @@ public class MinioService {
                             .build()
             );
 
-            return String.format("%s/%s", bucketName, objectName);
+            return bucketName + "/" + objectName;
+        } catch (IOException e) {
+            throw new FileStorageException(HttpStatus.BAD_REQUEST, "Failed to read file");
+        } catch (ErrorResponseException e) {
+            throw new FileStorageException(HttpStatus.BAD_REQUEST, e.errorResponse().message());
         } catch (Exception e) {
-            throw new FileStorageException("Upload file failed", e);
+            throw new FileStorageException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to upload file to bucket: " + bucketName);
         }
     }
 
@@ -86,23 +96,30 @@ public class MinioService {
                             .expiry(expirySeconds, TimeUnit.SECONDS)
                             .build()
             );
+        } catch (ErrorResponseException e) {
+            throw new FileStorageException(HttpStatus.NOT_FOUND, "Bucket not found: " + bucketName);
         } catch (Exception e) {
-            throw new FileStorageException("Get presigned url failed", e);
+            throw new FileStorageException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to generate presigned URL for: " + objectName);
         }
     }
 
     public void removeFile(String key) {
+        if (key == null || !key.contains("/")) {
+            throw new FileStorageException(HttpStatus.BAD_REQUEST, "Invalid key format");
+        }
+
         try {
             String[] parts = key.split("/", 2);
-
             minioClient.removeObject(
                     RemoveObjectArgs.builder()
                             .bucket(parts[0])
                             .object(parts[1])
                             .build()
             );
+        } catch (ErrorResponseException e) {
+            throw new FileStorageException(HttpStatus.NOT_FOUND, "File not found: " + key);
         } catch (Exception e) {
-            throw new FileStorageException("Remove file failed", e);
+            throw new FileStorageException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to remove file: " + key);
         }
     }
 
