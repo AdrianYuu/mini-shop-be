@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -40,14 +41,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<WebResponse<?>> responseStatusException(ResponseStatusException e) {
-        assert e.getReason() != null;
+        String reason = Optional.ofNullable(e.getReason())
+                .filter(r -> !r.isBlank())
+                .orElse(e.getStatusCode().toString());
+
         return ResponseEntity
                 .status(e.getStatusCode())
                 .body(WebResponse.builder()
                         .errors(List.of(
                                 ErrorResponse.builder()
                                         .field("general")
-                                        .messages(List.of(e.getReason()))
+                                        .messages(List.of(reason))
                                         .build()
                         ))
                         .build());
