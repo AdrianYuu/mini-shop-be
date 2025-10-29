@@ -1,6 +1,6 @@
 package com.adrian.minishop.service;
 
-import com.adrian.minishop.dto.request.CreateProductCategoryRequest;
+import com.adrian.minishop.dto.request.ProductCategoryRequest;
 import com.adrian.minishop.dto.response.ProductCategoryResponse;
 import com.adrian.minishop.entity.ProductCategory;
 import com.adrian.minishop.exception.HttpException;
@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -31,15 +34,15 @@ public class ProductCategoryService {
                 .toList();
     }
 
-    public ProductCategoryResponse get(String productCategoryId) {
-        ProductCategory productCategory = productCategoryRepository.findById(productCategoryId)
+    public ProductCategoryResponse get(String id) {
+        ProductCategory productCategory = productCategoryRepository.findById(id)
                 .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Product category not found"));
 
         return productCategoryMapper.productCategoryToProductCategoryResponse(productCategory);
     }
 
     @Transactional
-    public ProductCategoryResponse create(CreateProductCategoryRequest request) {
+    public ProductCategoryResponse create(ProductCategoryRequest request) {
         validationService.validate(request);
 
         boolean nameExists = productCategoryRepository.existsByName(request.getName());
@@ -50,6 +53,27 @@ public class ProductCategoryService {
 
         ProductCategory productCategory = new ProductCategory();
         productCategory.setName(request.getName());
+
+        productCategory = productCategoryRepository.save(productCategory);
+
+        return productCategoryMapper.productCategoryToProductCategoryResponse(productCategory);
+    }
+
+    @Transactional
+    public ProductCategoryResponse update(String id, ProductCategoryRequest request) {
+        validationService.validate(request);
+
+        ProductCategory productCategory = productCategoryRepository.findById(id)
+                .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Product category not found"));
+
+        boolean nameExists = productCategoryRepository.existsByNameAndIdNot(request.getName(), id);
+
+        if (nameExists) {
+            throw new HttpException(HttpStatus.CONFLICT, "Name already exists", "name");
+        }
+
+        productCategory.setName(request.getName());
+        productCategory.setUpdatedAt(OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS));
 
         productCategory = productCategoryRepository.save(productCategory);
 

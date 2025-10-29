@@ -6,9 +6,9 @@ import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.annotations.UuidGenerator.Style;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 
 @MappedSuperclass
 @Getter
@@ -52,15 +52,10 @@ public abstract class BaseEntity {
     private OffsetDateTime deletedAt;
 
     @PrePersist
-    public void prePersist() {
-        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
-        this.createdAt = now;
-        this.updatedAt = now;
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.updatedAt = OffsetDateTime.now(ZoneOffset.UTC);
+    protected void onCreate() {
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
+        createdAt = now;
+        updatedAt = now;
     }
 
 }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public final class CreateProductCategoryRequest {
+public final class ProductCategoryRequest {
 
     @NotBlank(message = "Name is required")
     @Size(
