@@ -25,6 +25,8 @@ public class MinioService {
 
     private final MinioClient minioClient;
 
+    private final FileUtil fileUtil;
+
     @Value("${minio.url}")
     private String url;
 
@@ -33,8 +35,6 @@ public class MinioService {
 
     @Value("${minio.buckets.product}")
     private String productBucket;
-
-    private final FileUtil fileUtil;
 
     @PostConstruct
     public void init() {

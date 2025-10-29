@@ -29,8 +29,6 @@ public class AuthService {
 
     private final UserMapper userMapper;
 
-    private final JwtUtil jwtUtil;
-
     @Transactional
     public UserResponse register(RegisterRequest request) {
         validationService.validate(request);

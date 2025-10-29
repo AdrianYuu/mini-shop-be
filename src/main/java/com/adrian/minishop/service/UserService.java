@@ -21,11 +21,11 @@ public class UserService {
 
     private final ValidationService validationService;
 
+    private final MinioService minioService;
+
     private final UserRepository userRepository;
 
     private final UserMapper userMapper;
-
-    private final MinioService minioService;
 
     private final PasswordEncoder passwordEncoder;
 
