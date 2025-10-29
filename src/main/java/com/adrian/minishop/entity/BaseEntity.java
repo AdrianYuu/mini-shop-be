@@ -1,14 +1,14 @@
 package com.adrian.minishop.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.annotations.UuidGenerator.Style;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 @MappedSuperclass
 @Getter
@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
 
     @Id
+    @UuidGenerator(style = Style.RANDOM)
     @Column(
             name = "id",
             length = 36,
@@ -26,23 +27,21 @@ public abstract class BaseEntity {
     )
     private String id;
 
-    @CreationTimestamp
     @Column(
             name = "created_at",
             nullable = false,
             unique = false,
             updatable = false
     )
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
-    @UpdateTimestamp
     @Column(
             name = "updated_at",
             nullable = false,
             unique = false,
             updatable = true
     )
-    private LocalDateTime updatedAt;
+    private OffsetDateTime updatedAt;
 
     @Column(
             name = "deleted_at",
@@ -50,6 +49,18 @@ public abstract class BaseEntity {
             unique = false,
             updatable = true
     )
-    private LocalDateTime deletedAt;
+    private OffsetDateTime deletedAt;
+
+    @PrePersist
+    public void prePersist() {
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = OffsetDateTime.now(ZoneOffset.UTC);
+    }
 
 }

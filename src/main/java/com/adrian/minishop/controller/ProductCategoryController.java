@@ -1,5 +1,6 @@
 package com.adrian.minishop.controller;
 
+import com.adrian.minishop.dto.request.CreateProductCategoryRequest;
 import com.adrian.minishop.dto.response.ProductCategoryResponse;
 import com.adrian.minishop.dto.response.WebResponse;
 import com.adrian.minishop.service.ProductCategoryService;
@@ -7,11 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,14 +34,29 @@ public class ProductCategoryController {
     }
 
     @GetMapping(
-            path = "/{product_category_id}",
+            path = "/{productCategoryId}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<WebResponse<ProductCategoryResponse>> get(@PathVariable("product_category_id") String productCategoryId) {
+    public ResponseEntity<WebResponse<ProductCategoryResponse>> get(@PathVariable("productCategoryId") String productCategoryId) {
         ProductCategoryResponse response = productCategoryService.get(productCategoryId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
+                .body(WebResponse.<ProductCategoryResponse>builder()
+                        .data(response)
+                        .build());
+    }
+
+    @PostMapping(
+            path = "",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<WebResponse<ProductCategoryResponse>> create(@RequestBody CreateProductCategoryRequest request) {
+        ProductCategoryResponse response = productCategoryService.create(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
                 .body(WebResponse.<ProductCategoryResponse>builder()
                         .data(response)
                         .build());

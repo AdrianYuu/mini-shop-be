@@ -8,7 +8,6 @@ import com.adrian.minishop.enums.Role;
 import com.adrian.minishop.exception.HttpException;
 import com.adrian.minishop.mapper.UserMapper;
 import com.adrian.minishop.repository.UserRepository;
-import com.adrian.minishop.util.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,11 +35,10 @@ public class AuthService {
         boolean emailExists = userRepository.existsByEmail(request.getEmail());
 
         if (emailExists) {
-            throw new HttpException(HttpStatus.BAD_REQUEST, "Email already exists", "email");
+            throw new HttpException(HttpStatus.CONFLICT, "Email already exists", "email");
         }
 
         User user = new User();
-        user.setId(UUID.randomUUID().toString());
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -48,9 +46,9 @@ public class AuthService {
         user.setImageKey(null);
         user.setRole(Role.USER);
 
-        User savedUser = userRepository.save(user);
+        user = userRepository.save(user);
 
-        return userMapper.userToUserResponse(savedUser);
+        return userMapper.userToUserResponse(user);
     }
 
     public UserResponse login(LoginRequest request) {
