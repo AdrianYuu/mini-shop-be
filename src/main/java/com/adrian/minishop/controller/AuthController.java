@@ -6,9 +6,9 @@ import com.adrian.minishop.dto.response.UserResponse;
 import com.adrian.minishop.dto.response.WebResponse;
 import com.adrian.minishop.service.AuthService;
 import com.adrian.minishop.util.CookieUtil;
+import com.adrian.minishop.util.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,6 +25,8 @@ public class AuthController {
 
     private final CookieUtil cookieUtil;
 
+    private final JwtUtil jwtUtil;
+
     @GetMapping(
             path = "/csrf"
     )
@@ -40,7 +42,7 @@ public class AuthController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<WebResponse<UserResponse>> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<WebResponse<UserResponse>> register(@RequestBody RegisterRequest request) {
         UserResponse response = authService.register(request);
 
         return ResponseEntity
@@ -55,11 +57,11 @@ public class AuthController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<WebResponse<UserResponse>> login(@Valid @RequestBody LoginRequest request, HttpServletResponse httpServletResponse) {
+    public ResponseEntity<WebResponse<UserResponse>> login(@RequestBody LoginRequest request, HttpServletResponse httpServletResponse) {
         UserResponse response = authService.login(request);
 
-        String token = authService.generateToken(response.getId());
-        Long expiration = authService.getExpiration();
+        String token = jwtUtil.generateToken(response.getId());
+        Long expiration = jwtUtil.getExpiration();
 
         Cookie tokenCookie = cookieUtil.createCookie("token",
                 token,
@@ -89,14 +91,7 @@ public class AuthController {
                 false,
                 "/");
 
-        Cookie csrfTokenCookie = cookieUtil.createCookie("csrf-token",
-                null,
-                0,
-                true,
-                false,
-                "/");
-
-        Cookie springCsrfTokenCookie = cookieUtil.createCookie("XSRF-TOKEN",
+        Cookie csrfTokenCookie = cookieUtil.createCookie("XSRF-TOKEN",
                 null,
                 0,
                 true,
@@ -105,7 +100,6 @@ public class AuthController {
 
         httpServletResponse.addCookie(tokenCookie);
         httpServletResponse.addCookie(csrfTokenCookie);
-        httpServletResponse.addCookie(springCsrfTokenCookie);
 
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)

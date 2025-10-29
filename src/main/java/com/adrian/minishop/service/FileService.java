@@ -9,9 +9,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FileService {
 
+    private final ValidationService validationService;
+
     private final MinioService minioService;
 
     public FileResponse get(FileRequest request) {
+        validationService.validate(request);
+
         String presignedUrl = minioService.getPresignedUrl(request.getBucketName(), request.getObjectName(), 3600);
 
         return FileResponse.builder()

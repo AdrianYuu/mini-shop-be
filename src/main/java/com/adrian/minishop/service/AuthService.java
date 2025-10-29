@@ -5,6 +5,7 @@ import com.adrian.minishop.dto.request.RegisterRequest;
 import com.adrian.minishop.dto.response.UserResponse;
 import com.adrian.minishop.entity.User;
 import com.adrian.minishop.enums.Role;
+import com.adrian.minishop.exception.HttpException;
 import com.adrian.minishop.mapper.UserMapper;
 import com.adrian.minishop.repository.UserRepository;
 import com.adrian.minishop.util.JwtUtil;
@@ -13,13 +14,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
+    private final ValidationService validationService;
 
     private final UserRepository userRepository;
 
@@ -31,10 +33,12 @@ public class AuthService {
 
     @Transactional
     public UserResponse register(RegisterRequest request) {
+        validationService.validate(request);
+
         boolean emailExists = userRepository.existsByEmail(request.getEmail());
 
         if (emailExists) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists");
+            throw new HttpException(HttpStatus.BAD_REQUEST, "Email already exists", "email");
         }
 
         User user = new User();
@@ -52,24 +56,18 @@ public class AuthService {
     }
 
     public UserResponse login(LoginRequest request) {
+        validationService.validate(request);
+
         User user = userRepository.findFirstByEmail(request.getEmail())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password"));
+                .orElseThrow(() -> new HttpException(HttpStatus.UNAUTHORIZED, "Invalid email or password"));
 
         boolean passwordValid = passwordEncoder.matches(request.getPassword(), user.getPassword());
 
         if (!passwordValid) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+            throw new HttpException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
 
         return userMapper.userToUserResponse(user);
-    }
-
-    public String generateToken(String userId) {
-        return jwtUtil.generateToken(userId);
-    }
-
-    public Long getExpiration() {
-        return jwtUtil.getExpiration();
     }
 
 }

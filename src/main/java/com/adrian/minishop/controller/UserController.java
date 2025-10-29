@@ -42,7 +42,7 @@ public class UserController {
     )
     public ResponseEntity<WebResponse<UserResponse>> updateUserInformation(
             @AuthenticationPrincipal User user,
-            @Valid @ModelAttribute UpdateUserInformationRequest request
+            @ModelAttribute UpdateUserInformationRequest request
     ) {
         UserResponse response = userService.updateUserInformation(user, request);
 
@@ -52,5 +52,13 @@ public class UserController {
                         .data(response)
                         .build());
     }
+
+//    @PatchMapping(
+//            path = "/me/password",
+//            consumes = MediaType.APPLICATION_JSON_VALUE
+//    )
+//    public ResponseEntity<WebResponse<?>> updateUserPassword() {
+//
+//    }
 
 }

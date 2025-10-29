@@ -3,32 +3,35 @@ package com.adrian.minishop.handler;
 import com.adrian.minishop.dto.response.ErrorResponse;
 import com.adrian.minishop.dto.response.WebResponse;
 import com.adrian.minishop.exception.FileStorageException;
+import com.adrian.minishop.exception.HttpException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // @Valid
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<WebResponse<?>> methodArgumentNotValidException(MethodArgumentNotValidException e) {
+    // Validation
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<WebResponse<?>> constraintViolationException(ConstraintViolationException e) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(WebResponse.builder()
-                        .errors(e.getBindingResult()
-                                .getFieldErrors()
+                        .errors(e.getConstraintViolations()
                                 .stream()
-                                .collect(Collectors.groupingBy(FieldError::getField,
-                                        Collectors.mapping(FieldError::getDefaultMessage, Collectors.toList())))
+                                .collect(Collectors.groupingBy(
+                                        violation -> violation.getPropertyPath().toString(),
+                                        Collectors.mapping(ConstraintViolation::getMessage, Collectors.toList())
+                                ))
                                 .entrySet()
                                 .stream()
                                 .map(err -> ErrorResponse.builder()
@@ -40,19 +43,15 @@ public class GlobalExceptionHandler {
     }
 
     // Throw in Service
-    @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<WebResponse<?>> responseStatusException(ResponseStatusException e) {
-        String reason = Optional.ofNullable(e.getReason())
-                .filter(r -> !r.isBlank())
-                .orElse(e.getStatusCode().toString());
-
+    @ExceptionHandler(HttpException.class)
+    public ResponseEntity<WebResponse<?>> httpException(HttpException e) {
         return ResponseEntity
                 .status(e.getStatusCode())
                 .body(WebResponse.builder()
                         .errors(List.of(
                                 ErrorResponse.builder()
-                                        .field("general")
-                                        .messages(List.of(reason))
+                                        .field(e.getField())
+                                        .messages(List.of(Objects.requireNonNull(e.getReason())))
                                         .build()
                         ))
                         .build());
