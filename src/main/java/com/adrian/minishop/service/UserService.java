@@ -67,7 +67,7 @@ public class UserService {
         }
 
         if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
-            throw new HttpException(HttpStatus.BAD_REQUEST, "New password can't be the same as the old password", "new password");
+            throw new HttpException(HttpStatus.BAD_REQUEST, "New password can't be the same as the old password", "newPassword");
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));

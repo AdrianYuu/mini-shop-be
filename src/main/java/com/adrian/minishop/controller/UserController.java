@@ -1,12 +1,11 @@
 package com.adrian.minishop.controller;
 
-import com.adrian.minishop.dto.request.RegisterRequest;
 import com.adrian.minishop.dto.request.UpdateUserInformationRequest;
+import com.adrian.minishop.dto.request.UpdateUserPasswordRequest;
 import com.adrian.minishop.dto.response.UserResponse;
 import com.adrian.minishop.dto.response.WebResponse;
 import com.adrian.minishop.entity.User;
 import com.adrian.minishop.service.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -53,12 +52,19 @@ public class UserController {
                         .build());
     }
 
-//    @PatchMapping(
-//            path = "/me/password",
-//            consumes = MediaType.APPLICATION_JSON_VALUE
-//    )
-//    public ResponseEntity<WebResponse<?>> updateUserPassword() {
-//
-//    }
+    @PatchMapping(
+            path = "/me/password",
+            consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<WebResponse<?>> updateUserPassword(
+            @AuthenticationPrincipal User user,
+            @RequestBody UpdateUserPasswordRequest request
+    ) {
+        userService.updateUserPassword(user, request);
+
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
 
 }

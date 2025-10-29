@@ -4,12 +4,12 @@ import com.adrian.minishop.dto.response.ErrorResponse;
 import com.adrian.minishop.dto.response.WebResponse;
 import com.adrian.minishop.exception.FileStorageException;
 import com.adrian.minishop.exception.HttpException;
+import com.adrian.minishop.util.StringUtil;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -18,7 +18,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    private final StringUtil stringUtil;
 
     // Validation
     @ExceptionHandler(ConstraintViolationException.class)
@@ -35,7 +38,7 @@ public class GlobalExceptionHandler {
                                 .entrySet()
                                 .stream()
                                 .map(err -> ErrorResponse.builder()
-                                        .field(err.getKey())
+                                        .field(stringUtil.toSnakeCase(err.getKey()))
                                         .messages(err.getValue())
                                         .build())
                                 .toList())
@@ -50,7 +53,7 @@ public class GlobalExceptionHandler {
                 .body(WebResponse.builder()
                         .errors(List.of(
                                 ErrorResponse.builder()
-                                        .field(e.getField())
+                                        .field(stringUtil.toSnakeCase(e.getField()))
                                         .messages(List.of(Objects.requireNonNull(e.getReason())))
                                         .build()
                         ))
