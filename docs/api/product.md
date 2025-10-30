@@ -10,7 +10,7 @@
 - Cookies:
     - token
 - Query Parameters:
-    - query (search by name)
+    - query (search by name and category's name)
     - page (start from 1)
     - size (default is 10)
 
