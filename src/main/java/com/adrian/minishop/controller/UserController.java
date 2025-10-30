@@ -56,7 +56,7 @@ public class UserController {
             path = "/me/password",
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<WebResponse<?>> updateUserPassword(
+    public ResponseEntity<WebResponse<Void>> updateUserPassword(
             @AuthenticationPrincipal User user,
             @RequestBody UpdateUserPasswordRequest request
     ) {

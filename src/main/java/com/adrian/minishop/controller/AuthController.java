@@ -30,7 +30,7 @@ public class AuthController {
     @GetMapping(
             path = "/csrf"
     )
-    public ResponseEntity<WebResponse<?>> csrf(CsrfToken csrfToken) {
+    public ResponseEntity<WebResponse<Void>> csrf(CsrfToken csrfToken) {
         csrfToken.getToken();
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
@@ -83,7 +83,7 @@ public class AuthController {
             path = "/logout",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<WebResponse<?>> logout(HttpServletResponse httpServletResponse) {
+    public ResponseEntity<WebResponse<Void>> logout(HttpServletResponse httpServletResponse) {
         Cookie tokenCookie = cookieUtil.createCookie("token",
                 null,
                 0,

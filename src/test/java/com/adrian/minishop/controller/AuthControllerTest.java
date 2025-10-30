@@ -330,7 +330,7 @@ public class AuthControllerTest {
         ).andExpectAll(
                 status().isUnauthorized()
         ).andDo(result -> {
-            WebResponse<?> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            WebResponse<Void> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
 
             assertNull(response.getData());

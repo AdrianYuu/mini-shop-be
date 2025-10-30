@@ -81,4 +81,15 @@ public class ProductCategoryController {
                         .build());
     }
 
+    @DeleteMapping(
+            path = "/{id}"
+    )
+    public ResponseEntity<WebResponse<Void>> delete(@PathVariable("id") String id) {
+        productCategoryService.delete(id);
+
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
 }

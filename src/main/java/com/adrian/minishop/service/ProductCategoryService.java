@@ -80,4 +80,12 @@ public class ProductCategoryService {
         return productCategoryMapper.productCategoryToProductCategoryResponse(productCategory);
     }
 
+    @Transactional
+    public void delete(String id) {
+        ProductCategory productCategory = productCategoryRepository.findById(id)
+                .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Product category not found"));
+
+        productCategoryRepository.delete(productCategory);
+    }
+
 }

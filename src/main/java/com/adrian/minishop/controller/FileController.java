@@ -22,7 +22,7 @@ public class FileController {
     @GetMapping(
             path = "/{bucketName}/{objectName}"
     )
-    public ResponseEntity<WebResponse<?>> get(
+    public ResponseEntity<WebResponse<Void>> get(
             @PathVariable("bucketName") String bucketName,
             @PathVariable("objectName") String objectName
     ) {
