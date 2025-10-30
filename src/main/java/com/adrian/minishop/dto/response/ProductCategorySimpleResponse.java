@@ -9,14 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public final class PaginationResponse {
+public final class ProductCategorySimpleResponse {
 
-    private Integer page;
+    private String id;
 
-    private Integer size;
-
-    private Integer totalPages;
-
-    private Long totalElements;
+    private String name;
 
 }

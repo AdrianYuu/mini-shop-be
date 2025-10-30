@@ -5,7 +5,6 @@ import com.adrian.minishop.dto.response.ProductCategoryResponse;
 import com.adrian.minishop.dto.response.WebResponse;
 import com.adrian.minishop.service.ProductCategoryService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
