@@ -6,14 +6,12 @@ import com.adrian.minishop.entity.ProductCategory;
 import com.adrian.minishop.exception.HttpException;
 import com.adrian.minishop.mapper.ProductCategoryMapper;
 import com.adrian.minishop.repository.ProductCategoryRepository;
+import com.adrian.minishop.util.TimeUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -25,6 +23,8 @@ public class ProductCategoryService {
     private final ProductCategoryRepository productCategoryRepository;
 
     private final ProductCategoryMapper productCategoryMapper;
+
+    private final TimeUtil timeUtil;
 
     public List<ProductCategoryResponse> list() {
         List<ProductCategory> productCategories = productCategoryRepository.findAll();
@@ -73,7 +73,7 @@ public class ProductCategoryService {
         }
 
         productCategory.setName(request.getName());
-        productCategory.setUpdatedAt(OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS));
+        productCategory.setUpdatedAt(timeUtil.now());
 
         productCategory = productCategoryRepository.save(productCategory);
 

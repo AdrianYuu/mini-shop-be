@@ -5,16 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.annotations.UuidGenerator.Style;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 public abstract class BaseEntity {
@@ -31,7 +27,6 @@ public abstract class BaseEntity {
     )
     private String id;
 
-    @CreatedDate
     @Column(
             name = "created_at",
             nullable = false,
@@ -40,7 +35,6 @@ public abstract class BaseEntity {
     )
     private OffsetDateTime createdAt;
 
-    @LastModifiedDate
     @Column(
             name = "updated_at",
             nullable = false,
@@ -56,5 +50,12 @@ public abstract class BaseEntity {
             updatable = true
     )
     private OffsetDateTime deletedAt;
+
+    @PrePersist
+    protected void preCreate() {
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
+        updatedAt = now;
+        createdAt = now;
+    }
 
 }

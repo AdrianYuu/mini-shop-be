@@ -9,7 +9,7 @@ public class FileUtil {
         if (fileName == null || !fileName.contains(".")) {
             return "";
         }
-        
+
         return fileName.substring(fileName.lastIndexOf('.'));
     }
 
