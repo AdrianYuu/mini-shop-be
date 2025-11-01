@@ -27,6 +27,8 @@ public class SecurityConfig {
 
     private final CustomAccessDeniedHandler accessDeniedHandler;
 
+    private final StatelessCookieCsrfTokenRepository statelessCookieCsrfTokenRepository;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
@@ -36,7 +38,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(csrf -> csrf
-                        .csrfTokenRepository(new StatelessCookieCsrfTokenRepository())
+                        .csrfTokenRepository(statelessCookieCsrfTokenRepository)
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
                 )
                 .sessionManagement(session -> session
@@ -54,7 +56,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(
                                 "/api/v1/product-categories/**"
-                        ).hasRole("ADMIN")
+                        ).hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

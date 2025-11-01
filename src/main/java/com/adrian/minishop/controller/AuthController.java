@@ -1,5 +1,6 @@
 package com.adrian.minishop.controller;
 
+import com.adrian.minishop.constant.Token;
 import com.adrian.minishop.dto.request.LoginRequest;
 import com.adrian.minishop.dto.request.RegisterRequest;
 import com.adrian.minishop.dto.response.UserResponse;
@@ -7,12 +8,12 @@ import com.adrian.minishop.dto.response.WebResponse;
 import com.adrian.minishop.service.AuthService;
 import com.adrian.minishop.util.CookieUtil;
 import com.adrian.minishop.util.JwtUtil;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,14 +64,7 @@ public class AuthController {
         String token = jwtUtil.generateToken(response.getId());
         Long expiration = jwtUtil.getExpiration();
 
-        Cookie tokenCookie = cookieUtil.createCookie("token",
-                token,
-                (int) (expiration / 1000),
-                true,
-                false,
-                "/");
-
-        httpServletResponse.addCookie(tokenCookie);
+        cookieUtil.createCookie(httpServletResponse, Token.ACCESS_TOKEN, token, expiration / 1000L, true, false, "strict", "/");
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -84,22 +78,10 @@ public class AuthController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<WebResponse<Void>> logout(HttpServletResponse httpServletResponse) {
-        Cookie tokenCookie = cookieUtil.createCookie("token",
-                null,
-                0,
-                true,
-                false,
-                "/");
+        cookieUtil.deleteCookie(httpServletResponse, Token.ACCESS_TOKEN, true, false, "strict", "/");
+        cookieUtil.deleteCookie(httpServletResponse, Token.CSRF_TOKEN, false, false, "strict", "/");
 
-        Cookie csrfTokenCookie = cookieUtil.createCookie("XSRF-TOKEN",
-                null,
-                0,
-                true,
-                false,
-                "/");
-
-        httpServletResponse.addCookie(tokenCookie);
-        httpServletResponse.addCookie(csrfTokenCookie);
+        SecurityContextHolder.clearContext();
 
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)

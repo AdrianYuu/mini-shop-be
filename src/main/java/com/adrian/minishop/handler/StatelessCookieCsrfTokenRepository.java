@@ -1,25 +1,26 @@
 package com.adrian.minishop.handler;
 
-import jakarta.servlet.http.Cookie;
+import com.adrian.minishop.constant.Token;
+import com.adrian.minishop.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.DefaultCsrfToken;
+import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.Optional;
 import java.util.UUID;
 
+@Component
+@RequiredArgsConstructor
 public class StatelessCookieCsrfTokenRepository implements CsrfTokenRepository {
-    private final String CSRF_COOKIE_NAME = "XSRF-TOKEN";
-    private final String CSRF_HEADER_NAME = "X-XSRF-TOKEN";
-    private final String CSRF_PARAM_NAME = "_csrf";
+
+    private final CookieUtil cookieUtil;
 
     @Override
     public CsrfToken generateToken(HttpServletRequest request) {
-        String token = UUID.randomUUID().toString();
-        return new DefaultCsrfToken(CSRF_HEADER_NAME, CSRF_PARAM_NAME, token);
+        return new DefaultCsrfToken(Token.CSRF_HEADER, Token.CSRF_PARAM, UUID.randomUUID().toString());
     }
 
     @Override
@@ -28,26 +29,18 @@ public class StatelessCookieCsrfTokenRepository implements CsrfTokenRepository {
             return;
         }
 
-        Cookie cookie = new Cookie(CSRF_COOKIE_NAME, token.getToken());
-        cookie.setPath("/");
-        cookie.setHttpOnly(false);
-        cookie.setSecure(request.isSecure());
-        cookie.setMaxAge(900);
-        response.addCookie(cookie);
+        cookieUtil.createCookie(response, Token.CSRF_TOKEN, token.getToken(), 900L, false, false, "strict", "/");
     }
 
     @Override
     public CsrfToken loadToken(HttpServletRequest request) {
-        if (request.getCookies() == null) {
+        String token = cookieUtil.getCookieValue(request, Token.CSRF_TOKEN);
+
+        if (token == null) {
             return null;
         }
 
-        Optional<String> token = Arrays.stream(request.getCookies())
-                .filter(c -> CSRF_COOKIE_NAME.equals(c.getName()))
-                .map(Cookie::getValue)
-                .findFirst();
-
-        return token.map(t -> new DefaultCsrfToken(CSRF_HEADER_NAME, CSRF_PARAM_NAME, t))
-                .orElse(null);
+        return new DefaultCsrfToken(Token.CSRF_HEADER, Token.CSRF_PARAM, token);
     }
+
 }
