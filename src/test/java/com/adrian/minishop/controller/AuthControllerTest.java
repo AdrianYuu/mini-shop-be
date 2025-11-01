@@ -1,6 +1,7 @@
 package com.adrian.minishop.controller;
 
 import com.adrian.minishop.TestHelper;
+import com.adrian.minishop.constant.Token;
 import com.adrian.minishop.dto.request.LoginRequest;
 import com.adrian.minishop.dto.request.RegisterRequest;
 import com.adrian.minishop.dto.response.UserResponse;
@@ -72,8 +73,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/register")
-                        .header("X-XSRF-TOKEN", csrfToken)
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
+                        .header(Token.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -101,13 +102,13 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/register")
-                        .header("X-XSRF-TOKEN", csrfToken)
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
+                        .header(Token.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
         ).andExpectAll(
-                status().isBadRequest()
+                status().isConflict()
         ).andDo(result -> {
             WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
             });
@@ -130,8 +131,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/register")
-                        .header("X-XSRF-TOKEN", csrfToken)
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
+                        .header(Token.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -163,8 +164,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/login")
-                        .header("X-XSRF-TOKEN", csrfToken)
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
+                        .header(Token.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -191,8 +192,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/login")
-                        .header("X-XSRF-TOKEN", csrfToken)
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
+                        .header(Token.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -219,8 +220,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/login")
-                        .header("X-XSRF-TOKEN", csrfToken)
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
+                        .header(Token.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -247,8 +248,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/login")
-                        .header("X-XSRF-TOKEN", csrfToken)
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
+                        .header(Token.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -264,7 +265,7 @@ public class AuthControllerTest {
 
             String setCookie = result.getResponse().getHeader("Set-Cookie");
             assertNotNull(setCookie);
-            assertTrue(setCookie.contains("token="));
+            assertTrue(setCookie.contains("ACCESS-TOKEN="));
         });
     }
 
@@ -274,8 +275,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 get("/api/v1/auth/me")
-                        .header("X-XSRF-TOKEN", csrfToken)
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
+                        .header(Token.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
         ).andExpectAll(
                 status().isUnauthorized()
@@ -296,9 +297,9 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 get("/api/v1/users/me")
-                        .header("X-XSRF-TOKEN", csrfToken)
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
-                        .cookie(new Cookie("token", token))
+                        .header(Token.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
+                        .cookie(new Cookie(Token.ACCESS_TOKEN, token))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
         ).andExpectAll(
                 status().isOk()
@@ -324,8 +325,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/logout")
-                        .header("X-XSRF-TOKEN", csrfToken)
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
+                        .header(Token.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
         ).andExpectAll(
                 status().isUnauthorized()
@@ -346,16 +347,16 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/logout")
-                        .header("X-XSRF-TOKEN", csrfToken)
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
-                        .cookie(new Cookie("token", token))
+                        .header(Token.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
+                        .cookie(new Cookie(Token.ACCESS_TOKEN, token))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
         ).andExpectAll(
                 status().isNoContent()
         ).andDo(result -> {
             Collection<String> setCookies = result.getResponse().getHeaders("Set-Cookie");
             assertFalse(setCookies.isEmpty());
-            assertTrue(setCookies.stream().anyMatch(c -> c.startsWith("token=;")));
+            assertTrue(setCookies.stream().anyMatch(c -> c.startsWith("ACCESS-TOKEN=;")));
             assertTrue(setCookies.stream().anyMatch(c -> c.startsWith("XSRF-TOKEN=;")));
         });
     }

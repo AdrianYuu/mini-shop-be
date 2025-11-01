@@ -1,11 +1,10 @@
 package com.adrian.minishop;
 
+import com.adrian.minishop.constant.Token;
 import com.adrian.minishop.dto.request.LoginRequest;
-import com.adrian.minishop.dto.response.WebResponse;
 import com.adrian.minishop.entity.User;
 import com.adrian.minishop.enums.Role;
 import com.adrian.minishop.repository.UserRepository;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Objects;
-import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -39,7 +37,7 @@ public class TestHelper {
                 status().isNoContent()
         ).andReturn();
 
-        Cookie csrfTokenCookie = result.getResponse().getCookie("XSRF-TOKEN");
+        Cookie csrfTokenCookie = result.getResponse().getCookie(Token.CSRF_TOKEN);
 
         return Objects.nonNull(csrfTokenCookie) ? csrfTokenCookie.getValue() : "";
     }
@@ -54,8 +52,8 @@ public class TestHelper {
 
         var result = mockMvc.perform(
                 post("/api/v1/auth/login")
-                        .header("X-XSRF-TOKEN", csrfToken)
-                        .cookie(new Cookie("XSRF-TOKEN", csrfToken))
+                        .header(Token.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -63,7 +61,7 @@ public class TestHelper {
                 status().isOk()
         ).andReturn();
 
-        Cookie cookie = result.getResponse().getCookie("token");
+        Cookie cookie = result.getResponse().getCookie(Token.ACCESS_TOKEN);
 
         return cookie != null ? cookie.getValue() : null;
     }
@@ -74,7 +72,6 @@ public class TestHelper {
 
     public void createUser() {
         User user = new User();
-        user.setId(UUID.randomUUID().toString());
         user.setName("Adrian Yu");
         user.setEmail("adrian@gmail.com");
         user.setPassword(passwordEncoder.encode("Ayu123456!"));
