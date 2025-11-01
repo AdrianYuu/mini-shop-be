@@ -1,5 +1,6 @@
 package com.adrian.minishop.filter;
 
+import com.adrian.minishop.constant.Token;
 import com.adrian.minishop.repository.UserRepository;
 import com.adrian.minishop.util.CookieUtil;
 import com.adrian.minishop.util.JwtUtil;
@@ -32,7 +33,7 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String token = cookieUtil.getCookieValue(request, "ACCESS-TOKEN");
+        String token = cookieUtil.getCookieValue(request, Token.ACCESS_TOKEN);
 
         boolean tokenValid = jwtUtil.validateToken(token);
 
