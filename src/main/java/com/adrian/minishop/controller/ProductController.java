@@ -1,5 +1,6 @@
 package com.adrian.minishop.controller;
 
+import com.adrian.minishop.dto.request.ProductRequest;
 import com.adrian.minishop.dto.request.SearchProductRequest;
 import com.adrian.minishop.dto.response.PaginationResponse;
 import com.adrian.minishop.dto.response.ProductResponse;
@@ -62,6 +63,21 @@ public class ProductController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
+                .body(WebResponse.<ProductResponse>builder()
+                        .data(response)
+                        .build());
+    }
+
+    @PostMapping(
+            path = "",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<WebResponse<ProductResponse>> create(@ModelAttribute ProductRequest request) {
+        ProductResponse response = productService.create(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
                 .body(WebResponse.<ProductResponse>builder()
                         .data(response)
                         .build());

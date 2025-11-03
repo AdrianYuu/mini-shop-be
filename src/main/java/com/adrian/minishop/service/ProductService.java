@@ -1,10 +1,13 @@
 package com.adrian.minishop.service;
 
+import com.adrian.minishop.dto.request.ProductRequest;
 import com.adrian.minishop.dto.request.SearchProductRequest;
 import com.adrian.minishop.dto.response.ProductResponse;
 import com.adrian.minishop.entity.Product;
+import com.adrian.minishop.entity.ProductCategory;
 import com.adrian.minishop.exception.HttpException;
 import com.adrian.minishop.mapper.ProductMapper;
+import com.adrian.minishop.repository.ProductCategoryRepository;
 import com.adrian.minishop.repository.ProductRepository;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +28,11 @@ public class ProductService {
 
     private final ValidationService validationService;
 
+    private final MinioService minioService;
+
     private final ProductRepository productRepository;
+
+    private final ProductCategoryRepository productCategoryRepository;
 
     private final ProductMapper productMapper;
 
@@ -56,6 +63,26 @@ public class ProductService {
     public ProductResponse get(String id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Product not found"));
+
+        return productMapper.productToProductResponse(product);
+    }
+
+    public ProductResponse create(ProductRequest request) {
+        validationService.validate(request);
+
+        ProductCategory productCategory = productCategoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Product category not found"));
+
+        String key = minioService.uploadFile(request.getImage(), minioService.getProductBucket());
+
+        Product product = new Product();
+        product.setName(request.getName());
+        product.setPrice(request.getPrice());
+        product.setStock(request.getStock());
+        product.setImageKey(key);
+        product.setCategory(productCategory);
+
+        productRepository.save(product);
 
         return productMapper.productToProductResponse(product);
     }
