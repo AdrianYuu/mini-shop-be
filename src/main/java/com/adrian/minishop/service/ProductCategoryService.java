@@ -61,10 +61,10 @@ public class ProductCategoryService {
 
     @Transactional
     public ProductCategoryResponse update(String id, ProductCategoryRequest request) {
-        validationService.validate(request);
-
         ProductCategory productCategory = productCategoryRepository.findById(id)
                 .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Product category not found"));
+
+        validationService.validate(request);
 
         boolean nameExists = productCategoryRepository.existsByNameAndIdNot(request.getName(), id);
 

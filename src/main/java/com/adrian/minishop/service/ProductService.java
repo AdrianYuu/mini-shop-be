@@ -1,7 +1,8 @@
 package com.adrian.minishop.service;
 
-import com.adrian.minishop.dto.request.ProductRequest;
+import com.adrian.minishop.dto.request.CreateProductRequest;
 import com.adrian.minishop.dto.request.SearchProductRequest;
+import com.adrian.minishop.dto.request.UpdateProductRequest;
 import com.adrian.minishop.dto.response.ProductResponse;
 import com.adrian.minishop.entity.Product;
 import com.adrian.minishop.entity.ProductCategory;
@@ -9,7 +10,9 @@ import com.adrian.minishop.exception.HttpException;
 import com.adrian.minishop.mapper.ProductMapper;
 import com.adrian.minishop.repository.ProductCategoryRepository;
 import com.adrian.minishop.repository.ProductRepository;
+import com.adrian.minishop.util.TimeUtil;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +38,8 @@ public class ProductService {
     private final ProductCategoryRepository productCategoryRepository;
 
     private final ProductMapper productMapper;
+
+    private final TimeUtil timeUtil;
 
     public Page<ProductResponse> search(SearchProductRequest request) {
         validationService.validate(request);
@@ -67,13 +72,17 @@ public class ProductService {
         return productMapper.productToProductResponse(product);
     }
 
-    public ProductResponse create(ProductRequest request) {
-        validationService.validate(request);
-
+    @Transactional
+    public ProductResponse create(CreateProductRequest request) {
         ProductCategory productCategory = productCategoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Product category not found"));
 
-        String key = minioService.uploadFile(request.getImage(), minioService.getProductBucket());
+        validationService.validate(request);
+
+        String key = null;
+        if (Objects.nonNull(request.getImage())) {
+            key = minioService.uploadFile(request.getImage(), minioService.getProductBucket());
+        }
 
         Product product = new Product();
         product.setName(request.getName());
@@ -82,7 +91,49 @@ public class ProductService {
         product.setImageKey(key);
         product.setCategory(productCategory);
 
-        productRepository.save(product);
+        product = productRepository.save(product);
+
+        return productMapper.productToProductResponse(product);
+    }
+
+    @Transactional
+    public ProductResponse update(String id, UpdateProductRequest request) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Product not found"));
+
+        validationService.validate(request);
+
+        if (Objects.nonNull(request.getName())) {
+            product.setName(request.getName());
+        }
+
+        if (Objects.nonNull(request.getPrice())) {
+            product.setPrice(request.getPrice());
+        }
+
+        if (Objects.nonNull(request.getStock())) {
+            product.setStock(request.getStock());
+        }
+
+        if (Objects.nonNull(request.getImage())) {
+            if (Objects.nonNull(product.getImageKey())) {
+                minioService.removeFile(product.getImageKey());
+            }
+
+            String key = minioService.uploadFile(request.getImage(), minioService.getProductBucket());
+            product.setImageKey(key);
+        }
+
+        if (Objects.nonNull(request.getCategoryId())) {
+            ProductCategory productCategory = productCategoryRepository.findById(request.getCategoryId())
+                    .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Product category not found"));
+
+            product.setCategory(productCategory);
+        }
+
+        product.setUpdatedAt(timeUtil.now());
+
+        product = productRepository.save(product);
 
         return productMapper.productToProductResponse(product);
     }

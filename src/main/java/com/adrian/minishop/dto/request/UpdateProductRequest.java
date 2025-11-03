@@ -1,5 +1,6 @@
 package com.adrian.minishop.dto.request;
 
+import com.adrian.minishop.validation.annotation.AtLeastOneFieldNotNull;
 import com.adrian.minishop.validation.annotation.ValidFile;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -10,20 +11,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 
+@AtLeastOneFieldNotNull
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public final class ProductRequest {
+public final class UpdateProductRequest {
 
-    @NotBlank(message = "Name is required")
     @Size(
             max = 100,
             message = "Name must not exceed 100 characters"
     )
     private String name;
 
-    @NotNull(message = "Price is required")
     @DecimalMin(
             value = "0.0",
             message = "Price must be greater than 0",
@@ -31,7 +31,6 @@ public final class ProductRequest {
     )
     private BigDecimal price;
 
-    @NotNull(message = "Stock is required")
     @Min(
             value = 1,
             message = "Stock must be greater than 0"
@@ -46,9 +45,6 @@ public final class ProductRequest {
     )
     private MultipartFile image;
 
-    @NotBlank(
-            message = "Category id is required"
-    )
     private String categoryId;
 
     // (form-data [category_id] -> [categoryId])

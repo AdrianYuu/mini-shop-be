@@ -62,7 +62,7 @@ public class ProductCategoryController {
                         .build());
     }
 
-    @PutMapping(
+    @PatchMapping(
             path = "/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE

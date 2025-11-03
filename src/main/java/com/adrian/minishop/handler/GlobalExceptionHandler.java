@@ -10,6 +10,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -38,8 +39,25 @@ public class GlobalExceptionHandler {
                                 .entrySet()
                                 .stream()
                                 .map(err -> ErrorResponse.builder()
-                                        .field(stringUtil.toSnakeCase(err.getKey()))
+                                        .field(stringUtil.toSnakeCase(stringUtil.orDefault(err.getKey(), "general")))
                                         .messages(err.getValue())
+                                        .build())
+                                .toList())
+                        .build());
+    }
+
+    // Data type mismatch
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<WebResponse<?>> methodArgumentNotValidException(MethodArgumentNotValidException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(WebResponse.builder()
+                        .errors(e.getBindingResult()
+                                .getFieldErrors()
+                                .stream()
+                                .map(err -> ErrorResponse.builder()
+                                        .field(err.getField())
+                                        .messages(List.of("Data type mismatch"))
                                         .build())
                                 .toList())
                         .build());
@@ -90,7 +108,7 @@ public class GlobalExceptionHandler {
                         .errors(List.of(
                                 ErrorResponse.builder()
                                         .field("general")
-                                        .messages(List.of(e.getMessage()))
+                                        .messages(List.of(e.getClass().toString()))
                                         .build()
                         ))
                         .build());

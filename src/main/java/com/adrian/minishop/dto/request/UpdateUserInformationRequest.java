@@ -1,5 +1,6 @@
 package com.adrian.minishop.dto.request;
 
+import com.adrian.minishop.validation.annotation.AtLeastOneFieldNotNull;
 import com.adrian.minishop.validation.annotation.ValidFile;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
+@AtLeastOneFieldNotNull
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -44,6 +44,7 @@ public class UserService {
         if (Objects.nonNull(request.getBio())) {
             user.setBio(request.getBio());
         }
+
         if (Objects.nonNull(request.getImage())) {
             if (Objects.nonNull(user.getImageKey())) {
                 minioService.removeFile(user.getImageKey());

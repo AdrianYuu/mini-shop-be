@@ -1,7 +1,8 @@
 package com.adrian.minishop.controller;
 
-import com.adrian.minishop.dto.request.ProductRequest;
+import com.adrian.minishop.dto.request.CreateProductRequest;
 import com.adrian.minishop.dto.request.SearchProductRequest;
+import com.adrian.minishop.dto.request.UpdateProductRequest;
 import com.adrian.minishop.dto.response.PaginationResponse;
 import com.adrian.minishop.dto.response.ProductResponse;
 import com.adrian.minishop.dto.response.WebResponse;
@@ -73,11 +74,29 @@ public class ProductController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<WebResponse<ProductResponse>> create(@ModelAttribute ProductRequest request) {
+    public ResponseEntity<WebResponse<ProductResponse>> create(@ModelAttribute CreateProductRequest request) {
         ProductResponse response = productService.create(request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
+                .body(WebResponse.<ProductResponse>builder()
+                        .data(response)
+                        .build());
+    }
+
+    @PatchMapping(
+            path = "/{id}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<WebResponse<ProductResponse>> update(
+            @PathVariable("id") String id,
+            @ModelAttribute UpdateProductRequest request
+    ) {
+        ProductResponse response = productService.update(id, request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
                 .body(WebResponse.<ProductResponse>builder()
                         .data(response)
                         .build());
