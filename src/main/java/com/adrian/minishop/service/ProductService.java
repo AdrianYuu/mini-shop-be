@@ -3,15 +3,16 @@ package com.adrian.minishop.service;
 import com.adrian.minishop.dto.request.SearchProductRequest;
 import com.adrian.minishop.dto.response.ProductResponse;
 import com.adrian.minishop.entity.Product;
+import com.adrian.minishop.exception.HttpException;
 import com.adrian.minishop.mapper.ProductMapper;
 import com.adrian.minishop.repository.ProductRepository;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -50,6 +51,13 @@ public class ProductService {
         Page<Product> page = productRepository.findAll(specification, pageable);
 
         return page.map(productMapper::productToProductResponse);
+    }
+
+    public ProductResponse get(String id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Product not found"));
+
+        return productMapper.productToProductResponse(product);
     }
 
 }
