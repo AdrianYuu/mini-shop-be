@@ -202,7 +202,7 @@ None
 
 ## Create Order Item
 - Method: POST
-- URL: /orders/items
+- URL: /orders/active/items
 - Headers:
     - Content-Type: application/json
 - Cookies:
@@ -271,7 +271,7 @@ None
 
 ## Update Order Item
 - Method: PATCH
-- URL: /orders/items/{order_item_id}
+- URL: /orders/active/items/{order_item_id}
 - Headers:
     - Content-Type: application/json
 - Cookies:
@@ -337,7 +337,7 @@ None
 
 ## Delete Order Item
 - Method: DELETE
-- URL: /orders/items/{order_item_id}
+- URL: /orders/active/items/{order_item_id}
 - Headers:
     - Content-Type: application/json
 - Cookies:
@@ -383,7 +383,7 @@ None
 
 ## Finalize Order
 - Method: POST
-- URL: /orders/finalize
+- URL: /orders/active/finalize
 - Headers:
     - Content-Type: application/json
 - Cookies:
