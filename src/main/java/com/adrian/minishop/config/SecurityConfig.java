@@ -3,10 +3,11 @@ package com.adrian.minishop.config;
 import com.adrian.minishop.filter.JwtFilter;
 import com.adrian.minishop.handler.CustomAccessDeniedHandler;
 import com.adrian.minishop.handler.CustomAuthenticationEntryPoint;
-import com.adrian.minishop.handler.StatelessCookieCsrfTokenRepository;
+import com.adrian.minishop.handler.CustomCookieCsrfTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -27,7 +28,7 @@ public class SecurityConfig {
 
     private final CustomAccessDeniedHandler accessDeniedHandler;
 
-    private final StatelessCookieCsrfTokenRepository statelessCookieCsrfTokenRepository;
+    private final CustomCookieCsrfTokenRepository cookieCsrfTokenRepository;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -38,7 +39,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .csrf(csrf -> csrf
-                        .csrfTokenRepository(statelessCookieCsrfTokenRepository)
+                        .csrfTokenRepository(cookieCsrfTokenRepository)
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
                 )
                 .sessionManagement(session -> session
@@ -54,9 +55,24 @@ public class SecurityConfig {
                                 "/api/v1/auth/register",
                                 "/api/v1/auth/csrf"
                         ).permitAll()
+
                         .requestMatchers(
-                                "/api/v1/product-categories/**"
+                                "/api/v1/product-categories"
                         ).hasAuthority("ADMIN")
+                        .requestMatchers(
+                                "/api/v1/product-categories/*"
+                        ).hasAuthority("ADMIN")
+
+                        .requestMatchers(
+                                HttpMethod.POST, "/api/v1/products"
+                        ).hasAuthority("ADMIN")
+                        .requestMatchers(
+                                HttpMethod.PATCH, "/api/v1/products/*"
+                        ).hasAuthority("ADMIN")
+                        .requestMatchers(
+                                HttpMethod.DELETE, "/api/v1/products/*"
+                        ).hasAuthority("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

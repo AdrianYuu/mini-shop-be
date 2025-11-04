@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class StatelessCookieCsrfTokenRepository implements CsrfTokenRepository {
+public class CustomCookieCsrfTokenRepository implements CsrfTokenRepository {
 
     private final CookieUtil cookieUtil;
 

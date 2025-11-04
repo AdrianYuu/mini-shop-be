@@ -1,10 +1,13 @@
 package com.adrian.minishop.controller;
 
+import com.adrian.minishop.dto.request.PaginationRequest;
 import com.adrian.minishop.dto.request.ProductCategoryRequest;
+import com.adrian.minishop.dto.response.PaginationResponse;
 import com.adrian.minishop.dto.response.ProductCategoryResponse;
 import com.adrian.minishop.dto.response.WebResponse;
 import com.adrian.minishop.service.ProductCategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +26,27 @@ public class ProductCategoryController {
             path = "",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<WebResponse<List<ProductCategoryResponse>>> list() {
-        List<ProductCategoryResponse> response = productCategoryService.list();
+    public ResponseEntity<WebResponse<List<ProductCategoryResponse>>> paginate(
+            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") Integer size
+    ) {
+        PaginationRequest request = PaginationRequest.builder()
+                .page(page)
+                .size(size)
+                .build();
+
+        Page<ProductCategoryResponse> response = productCategoryService.paginate(request);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(WebResponse.<List<ProductCategoryResponse>>builder()
-                        .data(response)
+                        .data(response.getContent())
+                        .pagination(PaginationResponse.builder()
+                                .page(response.getNumber() + 1)
+                                .size(response.getSize())
+                                .totalPages(response.getTotalPages())
+                                .totalElements(response.getTotalElements())
+                                .build())
                         .build());
     }
 

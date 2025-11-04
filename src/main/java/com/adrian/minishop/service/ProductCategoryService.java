@@ -1,5 +1,6 @@
 package com.adrian.minishop.service;
 
+import com.adrian.minishop.dto.request.PaginationRequest;
 import com.adrian.minishop.dto.request.ProductCategoryRequest;
 import com.adrian.minishop.dto.response.ProductCategoryResponse;
 import com.adrian.minishop.entity.ProductCategory;
@@ -9,10 +10,11 @@ import com.adrian.minishop.repository.ProductCategoryRepository;
 import com.adrian.minishop.util.TimeUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,12 +28,14 @@ public class ProductCategoryService {
 
     private final TimeUtil timeUtil;
 
-    public List<ProductCategoryResponse> list() {
-        List<ProductCategory> productCategories = productCategoryRepository.findAll();
+    public Page<ProductCategoryResponse> paginate(PaginationRequest request) {
+        validationService.validate(request);
 
-        return productCategories.stream()
-                .map(productCategoryMapper::productCategoryToProductCategoryResponse)
-                .toList();
+        Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize());
+
+        Page<ProductCategory> page = productCategoryRepository.findAll(pageable);
+
+        return page.map(productCategoryMapper::productCategoryToProductCategoryResponse);
     }
 
     public ProductCategoryResponse get(String id) {
