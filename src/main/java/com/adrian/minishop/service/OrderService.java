@@ -4,6 +4,7 @@ import com.adrian.minishop.dto.request.PaginationRequest;
 import com.adrian.minishop.dto.response.OrderResponse;
 import com.adrian.minishop.entity.Order;
 import com.adrian.minishop.entity.User;
+import com.adrian.minishop.exception.HttpException;
 import com.adrian.minishop.mapper.OrderMapper;
 import com.adrian.minishop.repository.OrderItemRepository;
 import com.adrian.minishop.repository.OrderRepository;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -33,6 +35,13 @@ public class OrderService {
         Page<Order> page = orderRepository.findAllByUser(user, pageable);
 
         return page.map(orderMapper::orderToOrderResponse);
+    }
+
+    public OrderResponse get(User user, String id) {
+        Order order = orderRepository.findByUserAndId(user, id)
+                .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Order not found"));
+
+        return orderMapper.orderToOrderResponse(order);
     }
 
 }

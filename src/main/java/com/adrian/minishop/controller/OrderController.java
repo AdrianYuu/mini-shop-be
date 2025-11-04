@@ -9,12 +9,10 @@ import com.adrian.minishop.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,7 +24,8 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping(
-            path = ""
+            path = "",
+            produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<WebResponse<List<OrderResponse>>> paginate(
             @AuthenticationPrincipal User user,
@@ -50,6 +49,23 @@ public class OrderController {
                                 .totalPages(response.getTotalPages())
                                 .totalElements(response.getTotalElements())
                                 .build())
+                        .build());
+    }
+
+    @GetMapping(
+            path = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<WebResponse<OrderResponse>> get(
+            @AuthenticationPrincipal User user,
+            @PathVariable("id") String id
+    ) {
+        OrderResponse response = orderService.get(user, id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(WebResponse.<OrderResponse>builder()
+                        .data(response)
                         .build());
     }
 
