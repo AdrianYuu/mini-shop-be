@@ -202,7 +202,7 @@ None
 
 ## Create Order Item
 - Method: POST
-- URL: /orders/{order_id}/items
+- URL: /orders/items
 - Headers:
     - Content-Type: application/json
 - Cookies:
@@ -212,7 +212,6 @@ None
 ```json
 {
   "quantity": 5,
-  "order_id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
   "product_id": "acde070d-8c4c-4f0d-9d8a-162843c10333"
 }
 ```
@@ -272,7 +271,7 @@ None
 
 ## Update Order Item
 - Method: PATCH
-- URL: /orders/{order_id}/items/{order_item_id}
+- URL: /orders/items/{order_item_id}
 - Headers:
     - Content-Type: application/json
 - Cookies:
@@ -338,7 +337,7 @@ None
 
 ## Delete Order Item
 - Method: DELETE
-- URL: /orders/{order_id}/items/{order_item_id}
+- URL: /orders/items/{order_item_id}
 - Headers:
     - Content-Type: application/json
 - Cookies:
