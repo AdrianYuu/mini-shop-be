@@ -138,4 +138,12 @@ public class ProductService {
         return productMapper.productToProductResponse(product);
     }
 
+    @Transactional
+    public void delete(String id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Product not found"));
+
+        productRepository.delete(product);
+    }
+
 }

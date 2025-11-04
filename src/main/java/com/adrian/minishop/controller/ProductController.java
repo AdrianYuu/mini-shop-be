@@ -102,4 +102,15 @@ public class ProductController {
                         .build());
     }
 
+    @DeleteMapping(
+            path = "/{id}"
+    )
+    public ResponseEntity<WebResponse<Void>> delete(@PathVariable("id") String id) {
+        productService.delete(id);
+
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
 }
