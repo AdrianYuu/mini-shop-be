@@ -1,6 +1,7 @@
 package com.adrian.minishop.controller;
 
 import com.adrian.minishop.dto.request.PaginationRequest;
+import com.adrian.minishop.dto.response.OrderItemResponse;
 import com.adrian.minishop.dto.response.OrderResponse;
 import com.adrian.minishop.dto.response.PaginationResponse;
 import com.adrian.minishop.dto.response.WebResponse;
@@ -65,6 +66,23 @@ public class OrderController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(WebResponse.<OrderResponse>builder()
+                        .data(response)
+                        .build());
+    }
+
+    @GetMapping(
+            path = "/{id}/items",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<WebResponse<List<OrderItemResponse>>> items(
+            @AuthenticationPrincipal User user,
+            @PathVariable("id") String id
+    ) {
+        List<OrderItemResponse> response = orderService.items(user, id);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(WebResponse.<List<OrderItemResponse>>builder()
                         .data(response)
                         .build());
     }

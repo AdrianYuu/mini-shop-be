@@ -63,7 +63,7 @@ public class TestHelper {
 
         Cookie cookie = result.getResponse().getCookie(Token.ACCESS_TOKEN);
 
-        return cookie != null ? cookie.getValue() : null;
+        return Objects.nonNull(cookie) ? cookie.getValue() : null;
     }
 
     public void deleteAllUser() {
