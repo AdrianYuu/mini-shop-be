@@ -55,8 +55,9 @@ public class ProductCategoryService {
             throw new HttpException(HttpStatus.CONFLICT, "Name already exists", "name");
         }
 
-        ProductCategory productCategory = new ProductCategory();
-        productCategory.setName(request.getName());
+        ProductCategory productCategory = ProductCategory.builder()
+                .name(request.getName())
+                .build();
 
         productCategory = productCategoryRepository.save(productCategory);
 

@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+@SuperBuilder
+@NoArgsConstructor
 @Entity
 @Table(name = "order_items")
-@NoArgsConstructor
 @Getter
 @Setter
 @SQLDelete(sql = "UPDATE order_items SET deleted_at = NOW() WHERE id = ?")

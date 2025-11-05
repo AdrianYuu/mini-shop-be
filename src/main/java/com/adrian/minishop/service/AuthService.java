@@ -36,13 +36,14 @@ public class AuthService {
             throw new HttpException(HttpStatus.CONFLICT, "Email already exists", "email");
         }
 
-        User user = new User();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setBio(null);
-        user.setImageKey(null);
-        user.setRole(Role.USER);
+        User user = User.builder()
+                .name(request.getName())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .bio(null)
+                .imageKey(null)
+                .role(Role.USER)
+                .build();
 
         user = userRepository.save(user);
 

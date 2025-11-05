@@ -71,13 +71,14 @@ public class TestHelper {
     }
 
     public void createUser() {
-        User user = new User();
-        user.setName("Adrian Yu");
-        user.setEmail("adrian@gmail.com");
-        user.setPassword(passwordEncoder.encode("Ayu123456!"));
-        user.setBio(null);
-        user.setImageKey(null);
-        user.setRole(Role.USER);
+        User user = User.builder()
+                .name("Adrian Yu")
+                .email("adrian@gmail.com")
+                .password(passwordEncoder.encode("Ayu123456!"))
+                .bio(null)
+                .imageKey(null)
+                .role(Role.USER)
+                .build();
 
         userRepository.save(user);
     }

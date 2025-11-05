@@ -102,10 +102,11 @@ public class OrderService {
             throw new HttpException(HttpStatus.BAD_REQUEST, "Product already exists in active order", "productId");
         }
 
-        OrderItem orderItem = new OrderItem();
-        orderItem.setQuantity(request.getQuantity());
-        orderItem.setOrder(order);
-        orderItem.setProduct(product);
+        OrderItem orderItem = OrderItem.builder()
+                .quantity(request.getQuantity())
+                .order(order)
+                .product(product)
+                .build();
 
         orderItem = orderItemRepository.save(orderItem);
 
@@ -190,10 +191,11 @@ public class OrderService {
             return order;
         }
 
-        order = new Order();
-        order.setTotalPrice(BigDecimal.ZERO);
-        order.setStatus(Status.ACTIVE);
-        order.setUser(user);
+        order = Order.builder()
+                .totalPrice(BigDecimal.ZERO)
+                .status(Status.ACTIVE)
+                .user(user)
+                .build();
 
         order = orderRepository.save(order);
 

@@ -84,12 +84,13 @@ public class ProductService {
             key = minioService.uploadFile(request.getImage(), minioService.getProductBucket());
         }
 
-        Product product = new Product();
-        product.setName(request.getName());
-        product.setPrice(request.getPrice());
-        product.setStock(request.getStock());
-        product.setImageKey(key);
-        product.setCategory(productCategory);
+        Product product = Product.builder()
+                .name(request.getName())
+                .price(request.getPrice())
+                .stock(request.getStock())
+                .imageKey(key)
+                .category(productCategory)
+                .build();
 
         product = productRepository.save(product);
 

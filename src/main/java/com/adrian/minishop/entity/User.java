@@ -5,14 +5,16 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
+@SuperBuilder
+@NoArgsConstructor
 @Entity
 @Table(name = "users")
-@NoArgsConstructor
 @Getter
 @Setter
 @SQLDelete(sql = "UPDATE users SET deleted_at = NOW() WHERE id = ?")

@@ -5,15 +5,17 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@SuperBuilder
+@NoArgsConstructor
 @Entity
 @Table(name = "orders")
-@NoArgsConstructor
 @Getter
 @Setter
 @SQLDelete(sql = "UPDATE orders SET deleted_at = NOW() WHERE id = ?")
