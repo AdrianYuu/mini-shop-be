@@ -44,7 +44,7 @@ public class ValidationService {
 
             return true;
         } catch (IllegalAccessException e) {
-            throw new HttpException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to check fields", "general");
+            throw new HttpException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to check fields");
         }
     }
 

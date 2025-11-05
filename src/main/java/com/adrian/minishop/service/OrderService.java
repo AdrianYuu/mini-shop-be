@@ -91,7 +91,7 @@ public class OrderService {
                 .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Product not found"));
 
         if (request.getQuantity() > product.getStock()) {
-            throw new HttpException(HttpStatus.BAD_REQUEST, "Insufficient stock for product");
+            throw new HttpException(HttpStatus.BAD_REQUEST, "Insufficient stock for product", "quantity");
         }
 
         Order order = getOrCreateActiveOrder(user);
@@ -99,7 +99,7 @@ public class OrderService {
         boolean orderItemExists = orderItemRepository.existsByOrderAndProduct(order, product);
 
         if (orderItemExists) {
-            throw new HttpException(HttpStatus.BAD_REQUEST, "Product already exists in active order");
+            throw new HttpException(HttpStatus.BAD_REQUEST, "Product already exists in active order", "productId");
         }
 
         OrderItem orderItem = new OrderItem();
@@ -124,7 +124,7 @@ public class OrderService {
         Product product = orderItem.getProduct();
 
         if (request.getQuantity() > product.getStock()) {
-            throw new HttpException(HttpStatus.BAD_REQUEST, "Insufficient stock for product");
+            throw new HttpException(HttpStatus.BAD_REQUEST, "Insufficient stock for product", "quantity");
         }
 
         orderItem.setQuantity(request.getQuantity());
@@ -160,7 +160,7 @@ public class OrderService {
                     .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Product not found"));
 
             if (orderItem.getQuantity() > product.getStock()) {
-                throw new HttpException(HttpStatus.BAD_REQUEST, "Insufficient stock for product with the name: " + product.getName());
+                throw new HttpException(HttpStatus.BAD_REQUEST, "Insufficient stock for product with name: " + product.getName());
             }
 
             product.setStock(product.getStock() - orderItem.getQuantity());
