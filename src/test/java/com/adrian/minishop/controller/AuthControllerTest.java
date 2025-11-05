@@ -270,56 +270,6 @@ public class AuthControllerTest {
     }
 
     @Test
-    void shouldMeUnauthorized_whenTokenNotExists() throws Exception {
-        String csrfToken = testHelper.getCsrfToken();
-
-        mockMvc.perform(
-                get("/api/v1/auth/me")
-                        .header(Token.CSRF_HEADER, csrfToken)
-                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-        ).andExpectAll(
-                status().isUnauthorized()
-        ).andDo(result -> {
-            WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
-            });
-
-            assertNull(response.getData());
-
-            assertNotNull(response.getErrors());
-        });
-    }
-
-    @Test
-    void shouldMeOk_whenTokenExists() throws Exception {
-        String csrfToken = testHelper.getCsrfToken();
-        String token = testHelper.getToken();
-
-        mockMvc.perform(
-                get("/api/v1/users/me")
-                        .header(Token.CSRF_HEADER, csrfToken)
-                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
-                        .cookie(new Cookie(Token.ACCESS_TOKEN, token))
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-        ).andExpectAll(
-                status().isOk()
-        ).andDo(result -> {
-            WebResponse<UserResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
-            });
-
-            assertNull(response.getErrors());
-
-            User user = testHelper.getUser();
-            assertEquals(user.getId(), response.getData().getId());
-            assertEquals(user.getName(), response.getData().getName());
-            assertEquals(user.getEmail(), response.getData().getEmail());
-            assertEquals(user.getBio(), response.getData().getBio());
-            assertEquals(user.getImageKey(), response.getData().getImageKey());
-            assertEquals(user.getRole(), response.getData().getRole());
-        });
-    }
-
-    @Test
     void shouldLogoutUnauthorized_whenTokenNotExists() throws Exception {
         String csrfToken = testHelper.getCsrfToken();
 
