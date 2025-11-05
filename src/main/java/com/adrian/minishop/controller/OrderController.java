@@ -153,4 +153,18 @@ public class OrderController {
                 .build();
     }
 
+    @PostMapping(
+            path = "/active/checkout",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<WebResponse<OrderResponse>> checkout(@AuthenticationPrincipal User user) {
+        OrderResponse response = orderService.checkout(user);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(WebResponse.<OrderResponse>builder()
+                        .data(response)
+                        .build());
+    }
+
 }

@@ -27,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
 
@@ -145,6 +146,42 @@ public class OrderService {
     }
 
     @Transactional
+    public OrderResponse checkout(User user) {
+        Order order = getOrCreateActiveOrder(user);
+
+        if (order.getItems().isEmpty()) {
+            throw new HttpException(HttpStatus.BAD_REQUEST, "Order items is empty");
+        }
+
+        BigDecimal totalPrice = BigDecimal.ZERO;
+
+        for (OrderItem orderItem : order.getItems()) {
+            Product product = productRepository.findByIdForUpdate(orderItem.getProduct().getId())
+                    .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Product not found"));
+
+            if (orderItem.getQuantity() > product.getStock()) {
+                throw new HttpException(HttpStatus.BAD_REQUEST, "Insufficient stock for product with the name: " + product.getName());
+            }
+
+            product.setStock(product.getStock() - orderItem.getQuantity());
+            productRepository.save(product);
+
+            BigDecimal subTotalPrice = product.getPrice()
+                    .multiply(BigDecimal.valueOf(orderItem.getQuantity()))
+                    .setScale(2, RoundingMode.HALF_UP);
+            totalPrice = totalPrice.add(subTotalPrice);
+        }
+
+        order.setTotalPrice(totalPrice.setScale(2, RoundingMode.HALF_UP));
+        order.setStatus(Status.FINALIZED);
+        order.setUpdatedAt(timeUtil.now());
+
+        order = orderRepository.save(order);
+
+        return orderMapper.orderToOrderResponse(order);
+    }
+
+    @Transactional
     public Order getOrCreateActiveOrder(User user) {
         Order order = orderRepository.findFirstByUserAndStatus(user, Status.ACTIVE)
                 .orElse(null);
@@ -154,7 +191,7 @@ public class OrderService {
         }
 
         order = new Order();
-        order.setTotalPrice(new BigDecimal("0.00"));
+        order.setTotalPrice(BigDecimal.ZERO);
         order.setStatus(Status.ACTIVE);
         order.setUser(user);
 

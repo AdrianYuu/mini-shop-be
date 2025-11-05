@@ -26,7 +26,7 @@ public class Order extends BaseEntity {
             scale = 2,
             nullable = false,
             unique = false,
-            updatable = false
+            updatable = true
     )
     private BigDecimal totalPrice;
 
