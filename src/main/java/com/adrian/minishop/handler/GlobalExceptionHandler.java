@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +24,9 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler {
 
     private final StringUtil stringUtil;
+
+    @Value("${app.env:dev}")
+    private String appEnv;
 
     // Validation
     @ExceptionHandler(ConstraintViolationException.class)
@@ -66,13 +70,19 @@ public class GlobalExceptionHandler {
     // Throw in Service
     @ExceptionHandler(HttpException.class)
     public ResponseEntity<WebResponse<?>> httpException(HttpException e) {
+        List<String> messages = List.of(Objects.requireNonNull(e.getReason()));
+
+        if (appEnv.equals("prod") && e.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
+            messages = List.of("Internal Server Error");
+        }
+
         return ResponseEntity
                 .status(e.getStatusCode())
                 .body(WebResponse.builder()
                         .errors(List.of(
                                 ErrorResponse.builder()
                                         .field(stringUtil.toSnakeCase(e.getField()))
-                                        .messages(List.of(Objects.requireNonNull(e.getReason())))
+                                        .messages(messages)
                                         .build()
                         ))
                         .build());
@@ -81,13 +91,19 @@ public class GlobalExceptionHandler {
     // File Storage Exception
     @ExceptionHandler(FileStorageException.class)
     public ResponseEntity<WebResponse<?>> fileStorageException(FileStorageException e) {
+        List<String> messages = List.of(Objects.requireNonNull(e.getMessage()));
+
+        if (appEnv.equals("prod") && e.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR) {
+            messages = List.of("Internal Server Error");
+        }
+
         return ResponseEntity
                 .status(e.getHttpStatus())
                 .body(WebResponse.builder()
                         .errors(List.of(
                                 ErrorResponse.builder()
                                         .field("general")
-                                        .messages(List.of(e.getMessage()))
+                                        .messages(messages)
                                         .build()
                         ))
                         .build());
@@ -102,13 +118,19 @@ public class GlobalExceptionHandler {
             httpStatus = HttpStatus.valueOf(errorResponse.getStatusCode().value());
         }
 
+        List<String> messages = List.of(Objects.requireNonNull(e.getClass().toString()));
+
+        if (appEnv.equals("prod") && httpStatus == HttpStatus.INTERNAL_SERVER_ERROR) {
+            messages = List.of("Internal Server Error");
+        }
+
         return ResponseEntity
                 .status(httpStatus)
                 .body(WebResponse.builder()
                         .errors(List.of(
                                 ErrorResponse.builder()
                                         .field("general")
-                                        .messages(List.of(e.getClass().toString()))
+                                        .messages(messages)
                                         .build()
                         ))
                         .build());
