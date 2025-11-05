@@ -2,23 +2,24 @@
 
 ---
 
-## Get Product Categories
+## Paginate
+
 - Method: GET
 - URL: /product-categories
-- Headers:
-    - None
 - Cookies:
     - token (admin)
 - Query Parameters:
-  - page (start from 1)
-  - size (default is 10)
+    - page (start from 1)
+    - size (default is 10)
 
 ### Payload
+
 ```text
 None
 ```
 
 ### Response (Success, 200)
+
 ```json
 {
   "data": [
@@ -45,6 +46,7 @@ None
 ```
 
 ### Response (Fail, 401)
+
 ```json
 {
   "errors": [
@@ -59,6 +61,7 @@ None
 ```
 
 ### Response (Fail, 403)
+
 ```json
 {
   "errors": [
@@ -74,20 +77,21 @@ None
 
 ---
 
-## Get Product Category
+## Get
+
 - Method: GET
-- URL: /product-categories/{product_category_id}
-- Headers:
-    - None
+- URL: /product-categories/{id}
 - Cookies:
     - token (admin)
 
 ### Payload
+
 ```text
 None
 ```
 
 ### Response (Success, 200)
+
 ```json
 {
   "data": {
@@ -100,6 +104,7 @@ None
 ```
 
 ### Response (Fail, 401)
+
 ```json
 {
   "errors": [
@@ -114,6 +119,7 @@ None
 ```
 
 ### Response (Fail, 403)
+
 ```json
 {
   "errors": [
@@ -128,6 +134,7 @@ None
 ```
 
 ### Response (Fail, 404)
+
 ```json
 {
   "errors": [
@@ -143,7 +150,8 @@ None
 
 ---
 
-## Create Product Category
+## Create
+
 - Method: POST
 - URL: /product-categories
 - Headers:
@@ -152,6 +160,7 @@ None
     - token (admin)
 
 ### Payload
+
 ```json
 {
   "name": "Furniture"
@@ -159,6 +168,7 @@ None
 ```
 
 ### Response (Success, 200)
+
 ```json
 {
   "data": {
@@ -171,6 +181,7 @@ None
 ```
 
 ### Response (Fail, 400)
+
 ```json
 {
   "errors": [
@@ -185,6 +196,7 @@ None
 ```
 
 ### Response (Fail, 401)
+
 ```json
 {
   "errors": [
@@ -199,6 +211,7 @@ None
 ```
 
 ### Response (Fail, 403)
+
 ```json
 {
   "errors": [
@@ -213,6 +226,7 @@ None
 ```
 
 ### Response (Fail, 409)
+
 ```json
 {
   "errors": [
@@ -228,15 +242,17 @@ None
 
 ---
 
-## Update Product Category
+## Update
+
 - Method: PATCH
-- URL: /product-categories/{product_category_id}
+- URL: /product-categories/{id}
 - Headers:
     - Content-Type: application/json
 - Cookies:
     - token (admin)
 
 ### Payload
+
 ```json
 {
   "name": "Furniture"
@@ -244,6 +260,7 @@ None
 ```
 
 ### Response (Success, 200)
+
 ```json
 {
   "data": {
@@ -256,6 +273,7 @@ None
 ```
 
 ### Response (Fail, 400)
+
 ```json
 {
   "errors": [
@@ -270,6 +288,7 @@ None
 ```
 
 ### Response (Fail, 401)
+
 ```json
 {
   "errors": [
@@ -284,6 +303,7 @@ None
 ```
 
 ### Response (Fail, 403)
+
 ```json
 {
   "errors": [
@@ -298,6 +318,7 @@ None
 ```
 
 ### Response (Fail, 404)
+
 ```json
 {
   "errors": [
@@ -312,6 +333,7 @@ None
 ```
 
 ### Response (Fail, 409)
+
 ```json
 {
   "errors": [
@@ -327,25 +349,27 @@ None
 
 ---
 
-## Delete Product Category
+## Delete
+
 - Method: DELETE
-- URL: /product-categories/{product_category_id}
-- Headers:
-    - None
+- URL: /product-categories/{id}
 - Cookies:
     - token (admin)
 
 ### Payload
+
 ```text
 None
 ```
 
 ### Response (Success, 204)
+
 ```text
 None
 ```
 
 ### Response (Fail, 401)
+
 ```json
 {
   "errors": [
@@ -360,6 +384,7 @@ None
 ```
 
 ### Response (Fail, 403)
+
 ```json
 {
   "errors": [
@@ -374,6 +399,7 @@ None
 ```
 
 ### Response (Fail, 404)
+
 ```json
 {
   "errors": [

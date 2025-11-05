@@ -2,7 +2,53 @@
 
 ---
 
+## Me
+
+- Method: GET
+- URL: /auth/me
+- Cookies:
+  - token
+
+### Payload
+
+```text
+None
+```
+
+### Response (Success, 200)
+
+```json
+{
+  "data": {
+    "id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
+    "name": "Adrian Yu",
+    "email": "adrian.yu@gmail.com",
+    "bio": null,
+    "image_key": null,
+    "role": "USER"
+  }
+}
+```
+
+### Response (Fail, 401)
+
+```json
+{
+  "errors": [
+    {
+      "field": "general",
+      "messages": [
+        "Unauthorized"
+      ]
+    }
+  ]
+}
+```
+
+---
+
 ## Update User Information
+
 - Method: PATCH
 - URL: /users/me
 - Headers:
@@ -11,6 +57,7 @@
     - token
 
 ### Payload
+
 ```json
 {
   "name": "Adrian Yu",
@@ -20,6 +67,7 @@
 ```
 
 ### Response (Success, 200)
+
 ```json
 {
   "data": {
@@ -27,12 +75,13 @@
     "name": "Adrian Yu",
     "email": "adrian.yu@gmail.com",
     "bio": "Software Engineer",
-    "image_url": "foo/bar.png"
+    "image_key": "foo/bar.png"
   }
 }
 ```
 
 ### Response (Fail, 400)
+
 ```json
 {
   "errors": [
@@ -47,6 +96,7 @@
 ```
 
 ### Response (Fail, 401)
+
 ```json
 {
   "errors": [
@@ -63,14 +113,16 @@
 ---
 
 ## Update User Password
+
 - Method: PATCH
 - URL: /users/me/password
 - Headers:
-  - Content-Type: application/json
+    - Content-Type: application/json
 - Cookies:
-  - token
+    - token
 
 ### Payload
+
 ```json
 {
   "new_password": "adrian123",
@@ -79,11 +131,13 @@
 ```
 
 ### Response (Success, 204)
+
 ```text
 None
 ```
 
 ### Response (Fail, 400)
+
 ```json
 {
   "errors": [
@@ -98,6 +152,7 @@ None
 ```
 
 ### Response (Fail, 401)
+
 ```json
 {
   "errors": [

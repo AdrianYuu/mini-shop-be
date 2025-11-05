@@ -2,15 +2,32 @@
 
 ---
 
+## CSRF
+
+- Method: GET
+- URL: /auth/csrf
+
+### Payload
+
+```text
+None
+```
+
+### Response (Success, 204)
+
+```text
+None
+```
+
 ## Register
+
 - Method: POST
 - URL: /auth/register
 - Headers:
-  - Content-Type: application/json
-- Cookies:
-  - None
+    - Content-Type: application/json
 
 ### Payload
+
 ```json
 {
   "name": "Adrian Yu",
@@ -20,6 +37,7 @@
 ```
 
 ### Response (Success, 201)
+
 ```json
 {
   "data": {
@@ -27,13 +45,14 @@
     "name": "Adrian Yu",
     "email": "adrian.yu@gmail.com",
     "bio": null,
-    "image_url": null,
+    "image_key": null,
     "role": "USER"
-  }  
+  }
 }
 ```
 
 ### Response (Fail, 400)
+
 ```json
 {
   "errors": [
@@ -56,14 +75,14 @@
 ---
 
 ## Login
+
 - Method: POST
 - URL: /auth/login
 - Headers:
     - Content-Type: application/json
-- Cookies:
-    - None
 
 ### Payload
+
 ```json
 {
   "email": "adrian.yu@gmail.com",
@@ -72,6 +91,7 @@
 ```
 
 ### Response (Success, 200)
+
 ```json
 {
   "data": {
@@ -79,13 +99,14 @@
     "name": "Adrian Yu",
     "email": "adrian.yu@gmail.com",
     "bio": null,
-    "image_url": null,
+    "image_key": null,
     "role": "USER"
   }
 }
 ```
 
 ### Response (Fail, 400)
+
 ```json
 {
   "errors": [
@@ -101,68 +122,27 @@
 
 ---
 
-## Me
-- Method: GET
-- URL: /auth/me
-- Headers:
-    - None
-- Cookies:
-    - token
-
-### Payload
-```text
-None
-```
-
-### Response (Success, 200)
-```json
-{
-  "data": {
-    "id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
-    "name": "Adrian Yu",
-    "email": "adrian.yu@gmail.com",
-    "bio": null,
-    "image_url": null,
-    "role": "USER"
-  }
-}
-```
-
-### Response (Fail, 401)
-```json
-{
-  "errors": [
-    {
-      "field": "general",
-      "messages": [
-        "Unauthorized"
-      ]
-    }
-  ]
-}
-```
-
----
-
 ## Logout
+
 - Method: POST
 - URL: /auth/logout
-- Headers:
-    - None
 - Cookies:
     - token
 
 ### Payload
+
 ```text
 None
 ```
 
 ### Response (Success, 204)
+
 ```text
 None
 ```
 
 ### Response (Fail, 401)
+
 ```json
 {
   "errors": [

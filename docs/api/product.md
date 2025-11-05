@@ -2,24 +2,26 @@
 
 ---
 
-## Search Products
+## Search
+
 - Method: GET
 - URL: /products
-- Headers:
-    - None
 - Cookies:
     - token
 - Query Parameters:
-    - query (search by name and category's name)
+    - name
+    - category
     - page (start from 1)
     - size (default is 10)
 
 ### Payload
+
 ```text
 None
 ```
 
 ### Response (Success, 200)
+
 ```json
 {
   "data": [
@@ -60,6 +62,7 @@ None
 ```
 
 ### Response (Fail, 401)
+
 ```json
 {
   "errors": [
@@ -75,20 +78,21 @@ None
 
 ---
 
-## Get Product
+## Get
+
 - Method: GET
-- URL: /products/{product_id}
-- Headers:
-    - None
+- URL: /products/{id}
 - Cookies:
     - token
 
 ### Payload
+
 ```Text
 None
 ```
 
 ### Response (Success, 200)
+
 ```json
 {
   "data": {
@@ -96,7 +100,7 @@ None
     "name": "Table",
     "price": 123.45,
     "stock": 10,
-    "image_url": "foo/bar.png",
+    "image_key": "foo/bar.png",
     "category": {
       "id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
       "name": "Furniture"
@@ -108,6 +112,7 @@ None
 ```
 
 ### Response (Fail, 401)
+
 ```json
 {
   "errors": [
@@ -122,6 +127,7 @@ None
 ```
 
 ### Response (Fail, 404)
+
 ```json
 {
   "errors": [
@@ -137,7 +143,8 @@ None
 
 ---
 
-## Create Product
+## Create
+
 - Method: POST
 - URL: /products
 - Headers:
@@ -146,6 +153,7 @@ None
     - token (must be an admin)
 
 ### Payload
+
 ```json
 {
   "name": "Table",
@@ -157,6 +165,7 @@ None
 ```
 
 ### Response (Success, 201)
+
 ```json
 {
   "data": {
@@ -164,7 +173,7 @@ None
     "name": "Table",
     "price": 123.45,
     "stock": 10,
-    "image_url": "foo/bar.png",
+    "image_key": "foo/bar.png",
     "category": {
       "id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
       "name": "Furniture"
@@ -176,6 +185,7 @@ None
 ```
 
 ### Response (Fail, 400)
+
 ```json
 {
   "errors": [
@@ -190,6 +200,7 @@ None
 ```
 
 ### Response (Fail, 401)
+
 ```json
 {
   "errors": [
@@ -204,6 +215,7 @@ None
 ```
 
 ### Response (Fail, 403)
+
 ```json
 {
   "errors": [
@@ -220,14 +232,16 @@ None
 ---
 
 ## Update Product
+
 - Method: PATCH
-- URL: /products/{product_id}
+- URL: /products/{id}
 - Headers:
-  - Content-Type: multipart/form-data
+    - Content-Type: multipart/form-data
 - Cookies:
-  - token (must be an admin)
+    - token (must be an admin)
 
 ### Payload
+
 ```json
 {
   "name": "Table",
@@ -239,6 +253,7 @@ None
 ```
 
 ### Response (Success, 200)
+
 ```json
 {
   "data": {
@@ -246,7 +261,7 @@ None
     "name": "Table",
     "price": 123.45,
     "stock": 10,
-    "image_url": "foo/bar.png",
+    "image_key": "foo/bar.png",
     "category": {
       "id": "acde070d-8c4c-4f0d-9d8a-162843c10333",
       "name": "Furniture"
@@ -258,6 +273,7 @@ None
 ```
 
 ### Response (Fail, 400)
+
 ```json
 {
   "errors": [
@@ -272,6 +288,7 @@ None
 ```
 
 ### Response (Fail, 401)
+
 ```json
 {
   "errors": [
@@ -286,6 +303,7 @@ None
 ```
 
 ### Response (Fail, 403)
+
 ```json
 {
   "errors": [
@@ -300,6 +318,7 @@ None
 ```
 
 ### Response (Fail, 404)
+
 ```json
 {
   "errors": [
@@ -316,24 +335,26 @@ None
 ---
 
 ## Delete Product
+
 - Method: DELETE
-- URL: /products/{product_id}
-- Headers:
-  - None
+- URL: /products/{id}
 - Cookies:
-  - token (must be an admin)
+    - token (must be an admin)
 
 ### Payload
+
 ```text
 None
 ```
 
 ### Response (Success, 204)
+
 ```text
 None
 ```
 
 ### Response (Fail, 401)
+
 ```json
 {
   "errors": [
@@ -348,6 +369,7 @@ None
 ```
 
 ### Response (Fail, 403)
+
 ```json
 {
   "errors": [
@@ -362,6 +384,7 @@ None
 ```
 
 ### Response (Fail, 404)
+
 ```json
 {
   "errors": [
