@@ -23,4 +23,6 @@ public final class OrderResponse {
 
     private OffsetDateTime createdAt;
 
+    private OffsetDateTime updatedAt;
+
 }

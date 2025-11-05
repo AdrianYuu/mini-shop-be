@@ -48,7 +48,7 @@ public class OrderService {
 
         Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize());
 
-        Page<Order> page = orderRepository.findAllByUser(user, pageable);
+        Page<Order> page = orderRepository.findAllByUserAndStatus(user, Status.FINALIZED, pageable);
 
         return page.map(orderMapper::orderToOrderResponse);
     }
@@ -56,6 +56,12 @@ public class OrderService {
     public OrderResponse get(User user, String id) {
         Order order = orderRepository.findFirstByUserAndId(user, id)
                 .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Order not found"));
+
+        return orderMapper.orderToOrderResponse(order);
+    }
+
+    public OrderResponse active(User user) {
+        Order order = getOrCreateActiveOrder(user);
 
         return orderMapper.orderToOrderResponse(order);
     }
@@ -77,6 +83,10 @@ public class OrderService {
 
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Product not found"));
+
+        if (request.getQuantity() > product.getStock()) {
+            throw new HttpException(HttpStatus.BAD_REQUEST, "Insufficient stock for product");
+        }
 
         Order order = getOrCreateActiveOrder(user);
 
@@ -100,7 +110,7 @@ public class OrderService {
         }
 
         order = new Order();
-        order.setTotalPrice(new BigDecimal("0.0"));
+        order.setTotalPrice(new BigDecimal("0.00"));
         order.setStatus(Status.ACTIVE);
         order.setUser(user);
 

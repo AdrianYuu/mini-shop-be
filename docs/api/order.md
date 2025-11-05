@@ -381,9 +381,9 @@ None
 }
 ```
 
-## Finalize Order
+## Checkout Order
 - Method: POST
-- URL: /orders/active/finalize
+- URL: /orders/active/checkout
 - Headers:
     - Content-Type: application/json
 - Cookies:

@@ -1,5 +1,6 @@
 package com.adrian.minishop.controller;
 
+import com.adrian.minishop.dto.request.CreateOrderItemRequest;
 import com.adrian.minishop.dto.request.PaginationRequest;
 import com.adrian.minishop.dto.response.OrderItemResponse;
 import com.adrian.minishop.dto.response.OrderResponse;
@@ -71,6 +72,22 @@ public class OrderController {
     }
 
     @GetMapping(
+            path = "/active",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<WebResponse<OrderResponse>> active(
+            @AuthenticationPrincipal User user
+    ) {
+        OrderResponse response = orderService.active(user);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(WebResponse.<OrderResponse>builder()
+                        .data(response)
+                        .build());
+    }
+
+    @GetMapping(
             path = "/{id}/items",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -83,6 +100,24 @@ public class OrderController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(WebResponse.<List<OrderItemResponse>>builder()
+                        .data(response)
+                        .build());
+    }
+
+    @PostMapping(
+            path = "/active/items",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<WebResponse<OrderItemResponse>> create(
+            @AuthenticationPrincipal User user,
+            @RequestBody CreateOrderItemRequest request
+    ) {
+        OrderItemResponse response = orderService.create(user, request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(WebResponse.<OrderItemResponse>builder()
                         .data(response)
                         .build());
     }
