@@ -2,7 +2,9 @@ package com.adrian.minishop.service;
 
 import com.adrian.minishop.dto.request.CreateOrderItemRequest;
 import com.adrian.minishop.dto.request.PaginationRequest;
+import com.adrian.minishop.dto.request.UpdateOrderItemRequest;
 import com.adrian.minishop.dto.response.OrderItemResponse;
+import com.adrian.minishop.dto.response.OrderItemSimpleResponse;
 import com.adrian.minishop.dto.response.OrderResponse;
 import com.adrian.minishop.entity.Order;
 import com.adrian.minishop.entity.OrderItem;
@@ -15,6 +17,7 @@ import com.adrian.minishop.mapper.OrderMapper;
 import com.adrian.minishop.repository.OrderItemRepository;
 import com.adrian.minishop.repository.OrderRepository;
 import com.adrian.minishop.repository.ProductRepository;
+import com.adrian.minishop.util.TimeUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,6 +45,8 @@ public class OrderService {
     private final OrderMapper orderMapper;
 
     private final OrderItemMapper orderItemMapper;
+
+    private final TimeUtil timeUtil;
 
     public Page<OrderResponse> paginate(User user, PaginationRequest request) {
         validationService.validate(request);
@@ -78,7 +83,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderItemResponse create(User user, CreateOrderItemRequest request) {
+    public OrderItemSimpleResponse create(User user, CreateOrderItemRequest request) {
         validationService.validate(request);
 
         Product product = productRepository.findById(request.getProductId())
@@ -90,6 +95,12 @@ public class OrderService {
 
         Order order = getOrCreateActiveOrder(user);
 
+        boolean orderItemExists = orderItemRepository.existsByOrderAndProduct(order, product);
+
+        if (orderItemExists) {
+            throw new HttpException(HttpStatus.BAD_REQUEST, "Product already exists in active order");
+        }
+
         OrderItem orderItem = new OrderItem();
         orderItem.setQuantity(request.getQuantity());
         orderItem.setOrder(order);
@@ -97,7 +108,30 @@ public class OrderService {
 
         orderItem = orderItemRepository.save(orderItem);
 
-        return orderItemMapper.orderItemToOrderItemResponse(orderItem);
+        return orderItemMapper.orderItemToOrderItemSimpleResponse(orderItem);
+    }
+
+    @Transactional
+    public OrderItemSimpleResponse update(User user, String id, UpdateOrderItemRequest request) {
+        validationService.validate(request);
+
+        Order order = getOrCreateActiveOrder(user);
+
+        OrderItem orderItem = orderItemRepository.findFirstByOrderAndId(order, id)
+                .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Order item not found in active order"));
+
+        Product product = orderItem.getProduct();
+
+        if (request.getQuantity() > product.getStock()) {
+            throw new HttpException(HttpStatus.BAD_REQUEST, "Insufficient stock for product");
+        }
+
+        orderItem.setQuantity(request.getQuantity());
+        orderItem.setUpdatedAt(timeUtil.now());
+
+        orderItem = orderItemRepository.save(orderItem);
+
+        return orderItemMapper.orderItemToOrderItemSimpleResponse(orderItem);
     }
 
     @Transactional

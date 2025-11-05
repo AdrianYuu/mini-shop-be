@@ -2,10 +2,8 @@ package com.adrian.minishop.controller;
 
 import com.adrian.minishop.dto.request.CreateOrderItemRequest;
 import com.adrian.minishop.dto.request.PaginationRequest;
-import com.adrian.minishop.dto.response.OrderItemResponse;
-import com.adrian.minishop.dto.response.OrderResponse;
-import com.adrian.minishop.dto.response.PaginationResponse;
-import com.adrian.minishop.dto.response.WebResponse;
+import com.adrian.minishop.dto.request.UpdateOrderItemRequest;
+import com.adrian.minishop.dto.response.*;
 import com.adrian.minishop.entity.User;
 import com.adrian.minishop.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -109,15 +107,34 @@ public class OrderController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<WebResponse<OrderItemResponse>> create(
+    public ResponseEntity<WebResponse<OrderItemSimpleResponse>> create(
             @AuthenticationPrincipal User user,
             @RequestBody CreateOrderItemRequest request
     ) {
-        OrderItemResponse response = orderService.create(user, request);
+        OrderItemSimpleResponse response = orderService.create(user, request);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(WebResponse.<OrderItemResponse>builder()
+                .body(WebResponse.<OrderItemSimpleResponse>builder()
+                        .data(response)
+                        .build());
+    }
+
+    @PatchMapping(
+            path = "/active/items/{id}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<WebResponse<OrderItemSimpleResponse>> update(
+            @AuthenticationPrincipal User user,
+            @PathVariable("id") String id,
+            @RequestBody UpdateOrderItemRequest request
+    ) {
+        OrderItemSimpleResponse response = orderService.update(user, id, request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(WebResponse.<OrderItemSimpleResponse>builder()
                         .data(response)
                         .build());
     }
