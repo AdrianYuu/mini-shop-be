@@ -139,4 +139,18 @@ public class OrderController {
                         .build());
     }
 
+    @DeleteMapping(
+            path = "/active/items/{id}"
+    )
+    public ResponseEntity<WebResponse<Void>> delete(
+            @AuthenticationPrincipal User user,
+            @PathVariable("id") String id
+    ) {
+        orderService.delete(user, id);
+
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
+
 }

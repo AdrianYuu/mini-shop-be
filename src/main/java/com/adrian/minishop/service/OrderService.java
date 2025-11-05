@@ -135,6 +135,16 @@ public class OrderService {
     }
 
     @Transactional
+    public void delete(User user, String id) {
+        Order order = getOrCreateActiveOrder(user);
+
+        OrderItem orderItem = orderItemRepository.findFirstByOrderAndId(order, id)
+                .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Order item not found in active order"));
+
+        orderItemRepository.delete(orderItem);
+    }
+
+    @Transactional
     public Order getOrCreateActiveOrder(User user) {
         Order order = orderRepository.findFirstByUserAndStatus(user, Status.ACTIVE)
                 .orElse(null);
