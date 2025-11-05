@@ -35,6 +35,19 @@ services:
     volumes:
       - minio_data:/data
 
+  backend:
+    build: .
+    container_name: backend
+    depends_on:
+      - mysql
+      - minio
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+
 volumes:
   mysql_data:
   minio_data:
