@@ -61,10 +61,10 @@ public class AuthController {
     public ResponseEntity<WebResponse<UserResponse>> login(@RequestBody LoginRequest request, HttpServletResponse httpServletResponse) {
         UserResponse response = authService.login(request);
 
-        String token = jwtUtil.generateToken(response.getId());
+        String accessToken = jwtUtil.generateToken(response.getId());
         Long expiration = jwtUtil.getExpiration();
 
-        cookieUtil.createCookie(httpServletResponse, Token.ACCESS_TOKEN, token, expiration / 1000L, true, false, "strict", "/");
+        cookieUtil.createCookie(httpServletResponse, Token.ACCESS_TOKEN, accessToken, expiration / 1000L, true, false, "strict", "/");
 
         return ResponseEntity
                 .status(HttpStatus.OK)

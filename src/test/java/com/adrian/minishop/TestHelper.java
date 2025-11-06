@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,6 +31,24 @@ public class TestHelper {
 
     private final PasswordEncoder passwordEncoder;
 
+    public MockMultipartFile getPngFile(String name) {
+        return new MockMultipartFile(
+                name,
+                "image.png",
+                "image/png",
+                "image".getBytes()
+        );
+    }
+
+    public MockMultipartFile getPdfFile(String name) {
+        return new MockMultipartFile(
+                name,
+                "file.pdf",
+                "application/pdf",
+                "pdf".getBytes()
+        );
+    }
+
     public String getCsrfToken() throws Exception {
         var result = mockMvc.perform(
                 get("/api/v1/auth/csrf")
@@ -42,7 +61,7 @@ public class TestHelper {
         return Objects.nonNull(csrfTokenCookie) ? csrfTokenCookie.getValue() : "";
     }
 
-    public String getToken() throws Exception {
+    public String getAccessToken() throws Exception {
         String csrfToken = getCsrfToken();
 
         LoginRequest request = LoginRequest.builder()

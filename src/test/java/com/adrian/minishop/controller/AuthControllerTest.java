@@ -6,7 +6,6 @@ import com.adrian.minishop.dto.request.LoginRequest;
 import com.adrian.minishop.dto.request.RegisterRequest;
 import com.adrian.minishop.dto.response.UserResponse;
 import com.adrian.minishop.dto.response.WebResponse;
-import com.adrian.minishop.entity.User;
 import com.adrian.minishop.enums.Role;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,7 +48,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    void shouldCsrfOk_whenRequestIsValid() throws Exception {
+    void shouldGetCsrfNoContent_whenRequestIsValid() throws Exception {
         mockMvc.perform(
                 get("/api/v1/auth/csrf")
         ).andExpectAll(
@@ -62,7 +61,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    void shouldRegisterBadRequest_whenRequestInvalid() throws Exception {
+    void shouldPostRegisterBadRequest_whenRequestInvalid() throws Exception {
         String csrfToken = testHelper.getCsrfToken();
 
         RegisterRequest request = RegisterRequest.builder()
@@ -91,7 +90,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    void shouldRegisterBadRequest_whenEmailExists() throws Exception {
+    void shouldPostRegisterConflict_whenEmailExists() throws Exception {
         String csrfToken = testHelper.getCsrfToken();
 
         RegisterRequest request = RegisterRequest.builder()
@@ -120,7 +119,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    void shouldRegisterCreated_whenRequestValid() throws Exception {
+    void shouldPostRegisterCreated_whenRequestValid() throws Exception {
         String csrfToken = testHelper.getCsrfToken();
 
         RegisterRequest request = RegisterRequest.builder()
@@ -154,7 +153,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    void shouldLoginBadRequest_whenRequestInvalid() throws Exception {
+    void shouldPostLoginBadRequest_whenRequestInvalid() throws Exception {
         String csrfToken = testHelper.getCsrfToken();
 
         LoginRequest request = LoginRequest.builder()
@@ -182,7 +181,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    void shouldLoginUnauthorized_whenEmailNotExists() throws Exception {
+    void shouldPostLoginUnauthorized_whenEmailNotExists() throws Exception {
         String csrfToken = testHelper.getCsrfToken();
 
         LoginRequest request = LoginRequest.builder()
@@ -210,7 +209,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    void shouldLoginUnauthorized_whenPasswordWrong() throws Exception {
+    void shouldPostLoginUnauthorized_whenPasswordWrong() throws Exception {
         String csrfToken = testHelper.getCsrfToken();
 
         LoginRequest request = LoginRequest.builder()
@@ -238,7 +237,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    void shouldLoginOk_whenRequestValid() throws Exception {
+    void shouldPostLoginOk_whenRequestValid() throws Exception {
         String csrfToken = testHelper.getCsrfToken();
 
         LoginRequest request = LoginRequest.builder()
@@ -270,7 +269,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    void shouldLogoutUnauthorized_whenTokenNotExists() throws Exception {
+    void shouldPostLogoutUnauthorized_whenTokenNotExists() throws Exception {
         String csrfToken = testHelper.getCsrfToken();
 
         mockMvc.perform(
@@ -291,15 +290,15 @@ public class AuthControllerTest {
     }
 
     @Test
-    void shouldLogoutOk_whenTokenExists() throws Exception {
+    void shouldPostLogoutNoContent_whenTokenExists() throws Exception {
         String csrfToken = testHelper.getCsrfToken();
-        String token = testHelper.getToken();
+        String accessToken = testHelper.getAccessToken();
 
         mockMvc.perform(
                 post("/api/v1/auth/logout")
                         .header(Token.CSRF_HEADER, csrfToken)
                         .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
-                        .cookie(new Cookie(Token.ACCESS_TOKEN, token))
+                        .cookie(new Cookie(Token.ACCESS_TOKEN, accessToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
         ).andExpectAll(
                 status().isNoContent()
