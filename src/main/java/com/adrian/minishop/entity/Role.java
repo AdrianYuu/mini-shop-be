@@ -1,4 +1,4 @@
-package com.adrian.minishop.enums;
+package com.adrian.minishop.entity;
 
 public enum Role {
     USER,

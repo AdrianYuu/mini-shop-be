@@ -1,6 +1,6 @@
 package com.adrian.minishop.dto.response;
 
-import com.adrian.minishop.enums.Status;
+import com.adrian.minishop.entity.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

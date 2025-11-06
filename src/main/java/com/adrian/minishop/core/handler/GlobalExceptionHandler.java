@@ -1,9 +1,9 @@
-package com.adrian.minishop.handler;
+package com.adrian.minishop.core.handler;
 
 import com.adrian.minishop.dto.response.ErrorResponse;
 import com.adrian.minishop.dto.response.WebResponse;
-import com.adrian.minishop.exception.FileStorageException;
-import com.adrian.minishop.exception.HttpException;
+import com.adrian.minishop.core.exception.FileStorageException;
+import com.adrian.minishop.core.exception.HttpException;
 import com.adrian.minishop.util.StringUtil;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;

@@ -1,6 +1,6 @@
 package com.adrian.minishop.dto.request;
 
-import com.adrian.minishop.validation.annotation.ValidFile;
+import com.adrian.minishop.core.validation.annotation.ValidFile;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

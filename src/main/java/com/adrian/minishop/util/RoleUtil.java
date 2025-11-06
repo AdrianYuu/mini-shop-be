@@ -1,6 +1,6 @@
 package com.adrian.minishop.util;
 
-import com.adrian.minishop.enums.Role;
+import com.adrian.minishop.entity.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;

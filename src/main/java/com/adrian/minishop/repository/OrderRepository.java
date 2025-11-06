@@ -2,7 +2,7 @@ package com.adrian.minishop.repository;
 
 import com.adrian.minishop.entity.Order;
 import com.adrian.minishop.entity.User;
-import com.adrian.minishop.enums.Status;
+import com.adrian.minishop.entity.Status;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

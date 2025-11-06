@@ -1,6 +1,6 @@
 package com.adrian.minishop.controller;
 
-import com.adrian.minishop.constant.Token;
+import com.adrian.minishop.util.TokenUtil;
 import com.adrian.minishop.dto.request.LoginRequest;
 import com.adrian.minishop.dto.request.RegisterRequest;
 import com.adrian.minishop.dto.response.UserResponse;
@@ -64,7 +64,7 @@ public class AuthController {
         String accessToken = jwtUtil.generateToken(response.getId());
         Long expiration = jwtUtil.getExpiration();
 
-        cookieUtil.createCookie(httpServletResponse, Token.ACCESS_TOKEN, accessToken, expiration / 1000L, true, false, "strict", "/");
+        cookieUtil.createCookie(httpServletResponse, TokenUtil.ACCESS_TOKEN, accessToken, expiration / 1000L, true, false, "strict", "/");
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -78,8 +78,8 @@ public class AuthController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<WebResponse<Void>> logout(HttpServletResponse httpServletResponse) {
-        cookieUtil.deleteCookie(httpServletResponse, Token.ACCESS_TOKEN, true, false, "strict", "/");
-        cookieUtil.deleteCookie(httpServletResponse, Token.CSRF_TOKEN, false, false, "strict", "/");
+        cookieUtil.deleteCookie(httpServletResponse, TokenUtil.ACCESS_TOKEN, true, false, "strict", "/");
+        cookieUtil.deleteCookie(httpServletResponse, TokenUtil.CSRF_TOKEN, false, false, "strict", "/");
 
         SecurityContextHolder.clearContext();
 

@@ -1,7 +1,7 @@
 package com.adrian.minishop.controller;
 
 import com.adrian.minishop.TestHelper;
-import com.adrian.minishop.constant.Token;
+import com.adrian.minishop.util.TokenUtil;
 import com.adrian.minishop.dto.response.UserResponse;
 import com.adrian.minishop.dto.response.WebResponse;
 import com.adrian.minishop.entity.User;
@@ -51,8 +51,8 @@ public class UserControllerTest {
 
         mockMvc.perform(
                 get("/api/v1/users/me")
-                        .header(Token.CSRF_HEADER, csrfToken)
-                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
+                        .header(TokenUtil.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(TokenUtil.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
         ).andExpectAll(
                 status().isUnauthorized()
@@ -73,9 +73,9 @@ public class UserControllerTest {
 
         mockMvc.perform(
                 get("/api/v1/users/me")
-                        .header(Token.CSRF_HEADER, csrfToken)
-                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
-                        .cookie(new Cookie(Token.ACCESS_TOKEN, accessToken))
+                        .header(TokenUtil.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(TokenUtil.CSRF_TOKEN, csrfToken))
+                        .cookie(new Cookie(TokenUtil.ACCESS_TOKEN, accessToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
         ).andExpectAll(
                 status().isOk()
@@ -101,8 +101,8 @@ public class UserControllerTest {
 
         mockMvc.perform(
                 patch("/api/v1/users/me")
-                        .header(Token.CSRF_HEADER, csrfToken)
-                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
+                        .header(TokenUtil.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(TokenUtil.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
         ).andExpectAll(
                 status().isUnauthorized()
@@ -134,9 +134,9 @@ public class UserControllerTest {
                             request.setMethod("PATCH");
                             return request;
                         })
-                        .header(Token.CSRF_HEADER, csrfToken)
-                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
-                        .cookie(new Cookie(Token.ACCESS_TOKEN, accessToken))
+                        .header(TokenUtil.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(TokenUtil.CSRF_TOKEN, csrfToken))
+                        .cookie(new Cookie(TokenUtil.ACCESS_TOKEN, accessToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
         ).andExpectAll(
@@ -169,9 +169,9 @@ public class UserControllerTest {
                             request.setMethod("PATCH");
                             return request;
                         })
-                        .header(Token.CSRF_HEADER, csrfToken)
-                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
-                        .cookie(new Cookie(Token.ACCESS_TOKEN, accessToken))
+                        .header(TokenUtil.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(TokenUtil.CSRF_TOKEN, csrfToken))
+                        .cookie(new Cookie(TokenUtil.ACCESS_TOKEN, accessToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
         ).andExpectAll(

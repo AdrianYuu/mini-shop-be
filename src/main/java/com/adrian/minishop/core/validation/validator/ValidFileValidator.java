@@ -1,6 +1,6 @@
-package com.adrian.minishop.validation.validator;
+package com.adrian.minishop.core.validation.validator;
 
-import com.adrian.minishop.validation.annotation.ValidFile;
+import com.adrian.minishop.core.validation.annotation.ValidFile;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.web.multipart.MultipartFile;

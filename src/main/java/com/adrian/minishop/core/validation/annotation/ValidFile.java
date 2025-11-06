@@ -1,7 +1,7 @@
-package com.adrian.minishop.validation.annotation;
+package com.adrian.minishop.core.validation.annotation;
 
 
-import com.adrian.minishop.validation.validator.ValidFileValidator;
+import com.adrian.minishop.core.validation.validator.ValidFileValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

@@ -1,7 +1,7 @@
-package com.adrian.minishop.validation.validator;
+package com.adrian.minishop.core.validation.validator;
 
 import com.adrian.minishop.service.ValidationService;
-import com.adrian.minishop.validation.annotation.AtLeastOneFieldNotNull;
+import com.adrian.minishop.core.validation.annotation.AtLeastOneFieldNotNull;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;

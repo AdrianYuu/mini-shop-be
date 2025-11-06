@@ -1,12 +1,12 @@
 package com.adrian.minishop.controller;
 
 import com.adrian.minishop.TestHelper;
-import com.adrian.minishop.constant.Token;
+import com.adrian.minishop.util.TokenUtil;
 import com.adrian.minishop.dto.request.LoginRequest;
 import com.adrian.minishop.dto.request.RegisterRequest;
 import com.adrian.minishop.dto.response.UserResponse;
 import com.adrian.minishop.dto.response.WebResponse;
-import com.adrian.minishop.enums.Role;
+import com.adrian.minishop.entity.Role;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
@@ -72,8 +72,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/register")
-                        .header(Token.CSRF_HEADER, csrfToken)
-                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
+                        .header(TokenUtil.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(TokenUtil.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -101,8 +101,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/register")
-                        .header(Token.CSRF_HEADER, csrfToken)
-                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
+                        .header(TokenUtil.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(TokenUtil.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -130,8 +130,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/register")
-                        .header(Token.CSRF_HEADER, csrfToken)
-                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
+                        .header(TokenUtil.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(TokenUtil.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -163,8 +163,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/login")
-                        .header(Token.CSRF_HEADER, csrfToken)
-                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
+                        .header(TokenUtil.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(TokenUtil.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -191,8 +191,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/login")
-                        .header(Token.CSRF_HEADER, csrfToken)
-                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
+                        .header(TokenUtil.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(TokenUtil.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -219,8 +219,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/login")
-                        .header(Token.CSRF_HEADER, csrfToken)
-                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
+                        .header(TokenUtil.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(TokenUtil.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -247,8 +247,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/login")
-                        .header(Token.CSRF_HEADER, csrfToken)
-                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
+                        .header(TokenUtil.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(TokenUtil.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -274,8 +274,8 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/logout")
-                        .header(Token.CSRF_HEADER, csrfToken)
-                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
+                        .header(TokenUtil.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(TokenUtil.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
         ).andExpectAll(
                 status().isUnauthorized()
@@ -296,9 +296,9 @@ public class AuthControllerTest {
 
         mockMvc.perform(
                 post("/api/v1/auth/logout")
-                        .header(Token.CSRF_HEADER, csrfToken)
-                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
-                        .cookie(new Cookie(Token.ACCESS_TOKEN, accessToken))
+                        .header(TokenUtil.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(TokenUtil.CSRF_TOKEN, csrfToken))
+                        .cookie(new Cookie(TokenUtil.ACCESS_TOKEN, accessToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
         ).andExpectAll(
                 status().isNoContent()

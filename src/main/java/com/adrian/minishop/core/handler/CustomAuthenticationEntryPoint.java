@@ -1,4 +1,4 @@
-package com.adrian.minishop.handler;
+package com.adrian.minishop.core.handler;
 
 import com.adrian.minishop.util.ResponseUtil;
 import jakarta.servlet.ServletException;

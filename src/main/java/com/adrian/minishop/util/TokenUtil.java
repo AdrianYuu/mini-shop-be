@@ -1,6 +1,6 @@
-package com.adrian.minishop.constant;
+package com.adrian.minishop.util;
 
-public class Token {
+public class TokenUtil {
 
     public static final String ACCESS_TOKEN = "ACCESS-TOKEN";
     public static final String CSRF_TOKEN = "XSRF-TOKEN";

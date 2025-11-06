@@ -1,9 +1,9 @@
 package com.adrian.minishop;
 
-import com.adrian.minishop.constant.Token;
+import com.adrian.minishop.util.TokenUtil;
 import com.adrian.minishop.dto.request.LoginRequest;
 import com.adrian.minishop.entity.User;
-import com.adrian.minishop.enums.Role;
+import com.adrian.minishop.entity.Role;
 import com.adrian.minishop.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
@@ -56,7 +56,7 @@ public class TestHelper {
                 status().isNoContent()
         ).andReturn();
 
-        Cookie csrfTokenCookie = result.getResponse().getCookie(Token.CSRF_TOKEN);
+        Cookie csrfTokenCookie = result.getResponse().getCookie(TokenUtil.CSRF_TOKEN);
 
         return Objects.nonNull(csrfTokenCookie) ? csrfTokenCookie.getValue() : "";
     }
@@ -71,8 +71,8 @@ public class TestHelper {
 
         var result = mockMvc.perform(
                 post("/api/v1/auth/login")
-                        .header(Token.CSRF_HEADER, csrfToken)
-                        .cookie(new Cookie(Token.CSRF_TOKEN, csrfToken))
+                        .header(TokenUtil.CSRF_HEADER, csrfToken)
+                        .cookie(new Cookie(TokenUtil.CSRF_TOKEN, csrfToken))
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -80,7 +80,7 @@ public class TestHelper {
                 status().isOk()
         ).andReturn();
 
-        Cookie cookie = result.getResponse().getCookie(Token.ACCESS_TOKEN);
+        Cookie cookie = result.getResponse().getCookie(TokenUtil.ACCESS_TOKEN);
 
         return Objects.nonNull(cookie) ? cookie.getValue() : null;
     }

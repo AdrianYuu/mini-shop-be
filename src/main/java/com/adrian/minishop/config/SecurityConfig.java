@@ -1,9 +1,9 @@
 package com.adrian.minishop.config;
 
-import com.adrian.minishop.filter.JwtFilter;
-import com.adrian.minishop.handler.CustomAccessDeniedHandler;
-import com.adrian.minishop.handler.CustomAuthenticationEntryPoint;
-import com.adrian.minishop.handler.CustomCookieCsrfTokenRepository;
+import com.adrian.minishop.security.JwtFilter;
+import com.adrian.minishop.core.handler.CustomAccessDeniedHandler;
+import com.adrian.minishop.core.handler.CustomAuthenticationEntryPoint;
+import com.adrian.minishop.core.handler.CustomCookieCsrfTokenRepository;
 import com.adrian.minishop.security.CustomPasswordEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

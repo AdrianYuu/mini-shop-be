@@ -1,4 +1,4 @@
-package com.adrian.minishop.mapper;
+package com.adrian.minishop.dto.mapper;
 
 import com.adrian.minishop.dto.response.OrderItemResponse;
 import com.adrian.minishop.dto.response.OrderItemSimpleResponse;

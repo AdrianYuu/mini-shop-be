@@ -1,6 +1,6 @@
 package com.adrian.minishop.service;
 
-import com.adrian.minishop.exception.HttpException;
+import com.adrian.minishop.core.exception.HttpException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;

@@ -1,6 +1,6 @@
 package com.adrian.minishop.service;
 
-import com.adrian.minishop.exception.FileStorageException;
+import com.adrian.minishop.core.exception.FileStorageException;
 import com.adrian.minishop.util.FileUtil;
 import io.minio.*;
 import io.minio.errors.ErrorResponseException;

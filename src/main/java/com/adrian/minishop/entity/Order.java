@@ -1,6 +1,5 @@
 package com.adrian.minishop.entity;
 
-import com.adrian.minishop.enums.Status;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

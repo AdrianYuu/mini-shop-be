@@ -1,6 +1,6 @@
-package com.adrian.minishop.handler;
+package com.adrian.minishop.core.handler;
 
-import com.adrian.minishop.constant.Token;
+import com.adrian.minishop.util.TokenUtil;
 import com.adrian.minishop.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,7 +20,7 @@ public class CustomCookieCsrfTokenRepository implements CsrfTokenRepository {
 
     @Override
     public CsrfToken generateToken(HttpServletRequest request) {
-        return new DefaultCsrfToken(Token.CSRF_HEADER, Token.CSRF_PARAM, UUID.randomUUID().toString());
+        return new DefaultCsrfToken(TokenUtil.CSRF_HEADER, TokenUtil.CSRF_PARAM, UUID.randomUUID().toString());
     }
 
     @Override
@@ -29,18 +29,18 @@ public class CustomCookieCsrfTokenRepository implements CsrfTokenRepository {
             return;
         }
 
-        cookieUtil.createCookie(response, Token.CSRF_TOKEN, token.getToken(), 900L, false, false, "strict", "/");
+        cookieUtil.createCookie(response, TokenUtil.CSRF_TOKEN, token.getToken(), 900L, false, false, "strict", "/");
     }
 
     @Override
     public CsrfToken loadToken(HttpServletRequest request) {
-        String token = cookieUtil.getCookieValue(request, Token.CSRF_TOKEN);
+        String token = cookieUtil.getCookieValue(request, TokenUtil.CSRF_TOKEN);
 
         if (token == null) {
             return null;
         }
 
-        return new DefaultCsrfToken(Token.CSRF_HEADER, Token.CSRF_PARAM, token);
+        return new DefaultCsrfToken(TokenUtil.CSRF_HEADER, TokenUtil.CSRF_PARAM, token);
     }
 
 }
