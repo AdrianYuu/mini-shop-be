@@ -2,6 +2,7 @@ package com.adrian.minishop.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.UuidGenerator;
@@ -12,6 +13,7 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 
 @SuperBuilder
+@NoArgsConstructor
 @MappedSuperclass
 @Getter
 @Setter
