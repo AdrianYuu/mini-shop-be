@@ -1,45 +1,30 @@
 package com.adrian.minishop.util;
 
+import com.adrian.minishop.config.JwtConfig;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
-import lombok.Getter;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 
 @Component
-@Getter
+@RequiredArgsConstructor
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
-    private String secret;
-
-    @Value("${jwt.expiration}")
-    private Long expiration;
-
-    private Key key;
-
-    @PostConstruct
-    public void init() {
-        this.key = Keys.hmacShaKeyFor(Base64.getEncoder().encode(secret.getBytes()));
-    }
+    private final JwtConfig jwtConfig;
 
     public String generateToken(String userId) {
         return Jwts.builder()
                 .setSubject(userId)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(key)
+                .setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getExpiration()))
+                .signWith(jwtConfig.getKey())
                 .compact();
     }
 
     public String extractToken(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(key)
+                .setSigningKey(jwtConfig.getKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
@@ -49,13 +34,17 @@ public class JwtUtil {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(key)
+                    .setSigningKey(jwtConfig.getKey())
                     .build()
                     .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public Long getExpiration() {
+        return jwtConfig.getExpiration();
     }
 
 }
