@@ -42,6 +42,8 @@ public class SecurityConfig {
                         .csrfTokenRepository(cookieCsrfTokenRepository)
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
                 )
+                .cors(cors -> {
+                })
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
