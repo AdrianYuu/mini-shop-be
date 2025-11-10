@@ -31,8 +31,8 @@ public final class UpdateUserInformationRequest {
 
     @ValidFile(
             maxSize = 2_000_000,
-            contentTypes = {"image/jpeg", "image/png"},
-            message = "Image must be JPEG or PNG under 2MB",
+            contentTypes = {"image/jpg", "image/jpeg", "image/png"},
+            message = "Image must be JPG, JPEG or PNG under 2MB",
             required = false
     )
     private MultipartFile image;
