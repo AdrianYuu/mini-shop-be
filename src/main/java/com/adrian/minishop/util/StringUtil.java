@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 public class StringUtil {
 
     public String toSnakeCase(String s) {
-        return s.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
+        return s.replaceAll("([a-z0-9])([A-Z])", "$1_$2").toLowerCase();
     }
 
     public String orDefault(String s, String defaultValue) {
