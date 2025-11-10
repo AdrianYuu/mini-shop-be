@@ -21,7 +21,7 @@ public final class UpdateUserPasswordRequest {
             message = "New password must be between 8 and 100 characters"
     )
     @Pattern(
-            regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};:'\"|,.<>/?]).*$",
+            regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};:'\"\\\\|,.<>/?]).*$",
             message = "New password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
     )
     private String newPassword;
