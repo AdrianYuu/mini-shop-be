@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
                                 .entrySet()
                                 .stream()
                                 .map(err -> ErrorResponse.builder()
-                                        .field(stringUtil.toSnakeCase(stringUtil.orDefault(err.getKey(), "general")))
+                                        .field(stringUtil.orDefault(err.getKey(), "general"))
                                         .messages(err.getValue())
                                         .build())
                                 .toList())
@@ -81,7 +81,7 @@ public class GlobalExceptionHandler {
                 .body(WebResponse.builder()
                         .errors(List.of(
                                 ErrorResponse.builder()
-                                        .field(stringUtil.toSnakeCase(e.getField()))
+                                        .field(e.getField())
                                         .messages(messages)
                                         .build()
                         ))
