@@ -18,7 +18,7 @@ public class FileService {
     public FileResponse get(FileRequest request) {
         validationService.validate(request);
 
-        String presignedUrl = minioService.getPresignedUrl(request.getBucketName(), request.getObjectName(), 3600);
+        String presignedUrl = minioService.getPresignedUrl(request.getBucketName(), request.getObjectName(), 900);
 
         return FileResponse.builder()
                 .presignedUrl(presignedUrl)
