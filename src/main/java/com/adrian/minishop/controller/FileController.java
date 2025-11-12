@@ -2,6 +2,7 @@ package com.adrian.minishop.controller;
 
 import com.adrian.minishop.dto.request.FileRequest;
 import com.adrian.minishop.dto.response.FileResponse;
+import com.adrian.minishop.dto.response.UserResponse;
 import com.adrian.minishop.dto.response.WebResponse;
 import com.adrian.minishop.service.FileService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class FileController {
     @GetMapping(
             path = "/{bucketName}/{objectName}"
     )
-    public ResponseEntity<WebResponse<Void>> get(
+    public ResponseEntity<WebResponse<FileResponse>> get(
             @PathVariable("bucketName") String bucketName,
             @PathVariable("objectName") String objectName
     ) {
@@ -34,9 +35,10 @@ public class FileController {
         FileResponse response = fileService.get(request);
 
         return ResponseEntity
-                .status(HttpStatus.FOUND)
-                .header("Location", response.getPresignedUrl())
-                .build();
+                .status(HttpStatus.OK)
+                .body(WebResponse.<FileResponse>builder()
+                        .data(response)
+                        .build());
     }
 
 }
