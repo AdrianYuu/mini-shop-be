@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.*;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableMethodSecurity
@@ -30,6 +31,8 @@ public class SecurityConfig {
 
     private final CustomCookieCsrfTokenRepository cookieCsrfTokenRepository;
 
+    private final CorsConfigurationSource corsConfigurationSource;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new CustomPasswordEncoder();
@@ -42,8 +45,9 @@ public class SecurityConfig {
                         .csrfTokenRepository(cookieCsrfTokenRepository)
                         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
                 )
-                .cors(cors -> {
-                })
+                .cors(cors -> cors
+                        .configurationSource(corsConfigurationSource)
+                )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
