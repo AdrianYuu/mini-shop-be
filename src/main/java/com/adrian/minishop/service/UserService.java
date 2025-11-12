@@ -7,11 +7,11 @@ import com.adrian.minishop.entity.User;
 import com.adrian.minishop.core.exception.HttpException;
 import com.adrian.minishop.dto.mapper.UserMapper;
 import com.adrian.minishop.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -29,6 +29,7 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional(readOnly = true)
     public UserResponse me(User user) {
         return userMapper.userToUserResponse(user);
     }

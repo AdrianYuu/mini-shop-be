@@ -18,13 +18,13 @@ import com.adrian.minishop.repository.OrderItemRepository;
 import com.adrian.minishop.repository.OrderRepository;
 import com.adrian.minishop.repository.ProductRepository;
 import com.adrian.minishop.util.TimeUtil;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -49,6 +49,7 @@ public class OrderService {
 
     private final TimeUtil timeUtil;
 
+    @Transactional(readOnly = true)
     public Page<OrderResponse> paginate(User user, PaginationRequest request) {
         validationService.validate(request);
 
@@ -59,6 +60,7 @@ public class OrderService {
         return page.map(orderMapper::orderToOrderResponse);
     }
 
+    @Transactional(readOnly = true)
     public OrderResponse get(User user, String id) {
         Order order = orderRepository.findFirstByUserAndId(user, id)
                 .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Order not found"));
@@ -66,12 +68,14 @@ public class OrderService {
         return orderMapper.orderToOrderResponse(order);
     }
 
+    @Transactional(readOnly = true)
     public OrderResponse active(User user) {
         Order order = getOrCreateActiveOrder(user);
 
         return orderMapper.orderToOrderResponse(order);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderItemResponse> items(User user, String id) {
         Order order = orderRepository.findFirstByUserAndId(user, id)
                 .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Order not found"));

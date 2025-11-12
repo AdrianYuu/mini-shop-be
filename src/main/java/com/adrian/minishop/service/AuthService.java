@@ -8,11 +8,11 @@ import com.adrian.minishop.entity.Role;
 import com.adrian.minishop.core.exception.HttpException;
 import com.adrian.minishop.dto.mapper.UserMapper;
 import com.adrian.minishop.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +50,7 @@ public class AuthService {
         return userMapper.userToUserResponse(user);
     }
 
+    @Transactional(readOnly = true)
     public UserResponse login(LoginRequest request) {
         validationService.validate(request);
 

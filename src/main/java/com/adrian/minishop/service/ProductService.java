@@ -12,7 +12,6 @@ import com.adrian.minishop.repository.ProductCategoryRepository;
 import com.adrian.minishop.repository.ProductRepository;
 import com.adrian.minishop.util.TimeUtil;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +41,7 @@ public class ProductService {
 
     private final TimeUtil timeUtil;
 
+    @Transactional(readOnly = true)
     public Page<ProductResponse> search(SearchProductRequest request) {
         validationService.validate(request);
 
@@ -65,6 +66,7 @@ public class ProductService {
         return page.map(productMapper::productToProductResponse);
     }
 
+    @Transactional(readOnly = true)
     public ProductResponse get(String id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Product not found"));

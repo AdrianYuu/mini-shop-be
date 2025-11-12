@@ -8,13 +8,13 @@ import com.adrian.minishop.core.exception.HttpException;
 import com.adrian.minishop.dto.mapper.ProductCategoryMapper;
 import com.adrian.minishop.repository.ProductCategoryRepository;
 import com.adrian.minishop.util.TimeUtil;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +28,7 @@ public class ProductCategoryService {
 
     private final TimeUtil timeUtil;
 
+    @Transactional(readOnly = true)
     public Page<ProductCategoryResponse> paginate(PaginationRequest request) {
         validationService.validate(request);
 
@@ -38,6 +39,7 @@ public class ProductCategoryService {
         return page.map(productCategoryMapper::productCategoryToProductCategoryResponse);
     }
 
+    @Transactional(readOnly = true)
     public ProductCategoryResponse get(String id) {
         ProductCategory productCategory = productCategoryRepository.findById(id)
                 .orElseThrow(() -> new HttpException(HttpStatus.NOT_FOUND, "Product category not found"));
