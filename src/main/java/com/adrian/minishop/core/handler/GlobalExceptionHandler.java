@@ -118,7 +118,7 @@ public class GlobalExceptionHandler {
             httpStatus = HttpStatus.valueOf(errorResponse.getStatusCode().value());
         }
 
-        List<String> messages = List.of(Objects.requireNonNull(e.getClass().toString()));
+        List<String> messages = List.of(Objects.requireNonNull(e.getMessage()));
 
         if (appEnv.equals("prod") && httpStatus == HttpStatus.INTERNAL_SERVER_ERROR) {
             messages = List.of("Internal Server Error");
