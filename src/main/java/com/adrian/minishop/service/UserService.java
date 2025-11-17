@@ -65,11 +65,11 @@ public class UserService {
         validationService.validate(request);
 
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
-            throw new HttpException(HttpStatus.UNAUTHORIZED, "Invalid password", "password");
+            throw new HttpException(HttpStatus.BAD_REQUEST, "Invalid current password", "currentPassword");
         }
 
         if (passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
-            throw new HttpException(HttpStatus.BAD_REQUEST, "New password can't be the same as the old password", "newPassword");
+            throw new HttpException(HttpStatus.BAD_REQUEST, "New password can't be the same as the current password", "newPassword");
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
