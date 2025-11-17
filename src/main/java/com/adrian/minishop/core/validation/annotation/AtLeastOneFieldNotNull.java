@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AtLeastOneFieldNotNull {
 
-    String message() default "At least one field must be not null";
+    String message() default "At least one field must be present";
 
     Class<?>[] groups() default {};
 
