@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ProductCategoryService {
@@ -37,6 +39,15 @@ public class ProductCategoryService {
         Page<ProductCategory> page = productCategoryRepository.findAll(pageable);
 
         return page.map(productCategoryMapper::productCategoryToProductCategoryResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductCategoryResponse> list() {
+        List<ProductCategory> productCategories = productCategoryRepository.findAll();
+
+        return productCategories.stream()
+                .map(productCategoryMapper::productCategoryToProductCategoryResponse)
+                .toList();
     }
 
     @Transactional(readOnly = true)

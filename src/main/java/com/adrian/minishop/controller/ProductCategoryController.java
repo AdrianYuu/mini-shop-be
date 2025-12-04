@@ -51,6 +51,20 @@ public class ProductCategoryController {
     }
 
     @GetMapping(
+            path = "/list",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<WebResponse<List<ProductCategoryResponse>>> list() {
+        List<ProductCategoryResponse> response = productCategoryService.list();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(WebResponse.<List<ProductCategoryResponse>>builder()
+                        .data(response)
+                        .build());
+    }
+
+    @GetMapping(
             path = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
