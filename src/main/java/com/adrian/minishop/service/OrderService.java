@@ -103,7 +103,7 @@ public class OrderService {
         boolean orderItemExists = orderItemRepository.existsByOrderAndProduct(order, product);
 
         if (orderItemExists) {
-            throw new HttpException(HttpStatus.BAD_REQUEST, "Product already exists in active order", "productId");
+            throw new HttpException(HttpStatus.BAD_REQUEST, "Product already exists in active order", "general");
         }
 
         OrderItem orderItem = OrderItem.builder()
