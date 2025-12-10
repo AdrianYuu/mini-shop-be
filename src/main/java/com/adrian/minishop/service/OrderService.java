@@ -68,7 +68,7 @@ public class OrderService {
         return orderMapper.orderToOrderResponse(order);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public OrderResponse active(User user) {
         Order order = getOrCreateActiveOrder(user);
 
