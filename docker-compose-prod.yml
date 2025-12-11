@@ -8,6 +8,8 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - mini-shop-network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -21,6 +23,8 @@ services:
       PMA_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "8888:80"
+    networks:
+      - mini-shop-network
 
   minio:
     image: minio/minio:latest
@@ -34,6 +38,8 @@ services:
       - "9001:9001"
     volumes:
       - minio_data:/data
+    networks:
+      - mini-shop-network
 
   backend:
     build: .
@@ -47,7 +53,13 @@ services:
       - "8080:8080"
     env_file:
       - .env
+    networks:
+      - mini-shop-network
 
 volumes:
   mysql_data:
   minio_data:
+
+networks:
+  mini-shop-network:
+    external: true
