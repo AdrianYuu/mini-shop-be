@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
@@ -63,18 +64,22 @@ public class MinioService {
             throw new FileStorageException(HttpStatus.BAD_REQUEST, "File is required");
         }
 
-        try (InputStream inputStream = file.getInputStream()) {
+        try {
             String extension = fileUtil.getFileExtension(file.getOriginalFilename());
             String objectName = UUID.randomUUID() + extension;
 
-            minioClient.putObject(
-                    PutObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(objectName)
-                            .stream(inputStream, file.getSize(), -1)
-                            .contentType(file.getContentType())
-                            .build()
-            );
+            byte[] fileContent = file.getBytes();
+
+            try (InputStream inputStream = new ByteArrayInputStream(fileContent)) {
+                minioClient.putObject(
+                        PutObjectArgs.builder()
+                                .bucket(bucketName)
+                                .object(objectName)
+                                .stream(inputStream, fileContent.length, -1)
+                                .contentType(file.getContentType())
+                                .build()
+                );
+            }
 
             return bucketName + "/" + objectName;
         } catch (IOException e) {
