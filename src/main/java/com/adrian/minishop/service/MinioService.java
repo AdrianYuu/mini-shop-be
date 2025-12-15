@@ -7,35 +7,42 @@ import io.minio.errors.ErrorResponseException;
 import io.minio.http.Method;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@RequiredArgsConstructor
 @Getter
 public class MinioService {
 
     private final MinioClient minioClient;
 
-    private final FileUtil fileUtil;
+    private final MinioClient publicMinioClient;
 
-    @Value("${minio.url}")
-    private String url;
+    private final FileUtil fileUtil;
 
     @Value("${minio.buckets.user}")
     private String userBucket;
 
     @Value("${minio.buckets.product}")
     private String productBucket;
+
+    public MinioService(
+            @Qualifier("minioClient") MinioClient minioClient,
+            @Qualifier("publicMinioClient") MinioClient publicMinioClient,
+            FileUtil fileUtil
+    ) {
+        this.minioClient = minioClient;
+        this.publicMinioClient = publicMinioClient;
+        this.fileUtil = fileUtil;
+    }
 
     @PostConstruct
     public void init() {
@@ -81,7 +88,7 @@ public class MinioService {
 
             return bucketName + "/" + objectName;
         } catch (IOException e) {
-            throw new FileStorageException(HttpStatus.BAD_REQUEST, "Failed to read file" + e.getMessage());
+            throw new FileStorageException(HttpStatus.BAD_REQUEST, "Failed to read file");
         } catch (Exception e) {
             throw new FileStorageException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to upload file to bucket: " + bucketName);
         }
@@ -89,7 +96,7 @@ public class MinioService {
 
     public String getPresignedUrl(String bucketName, String objectName, int expirySeconds) {
         try {
-            return minioClient.getPresignedObjectUrl(
+            return publicMinioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .method(Method.GET)
                             .bucket(bucketName)

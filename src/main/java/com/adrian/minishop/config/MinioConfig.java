@@ -11,6 +11,9 @@ public class MinioConfig {
     @Value("${minio.url}")
     private String url;
 
+    @Value("${minio.public-url}")
+    private String publicUrl;
+
     @Value("${minio.access.name}")
     private String name;
 
@@ -21,6 +24,14 @@ public class MinioConfig {
     public MinioClient minioClient() {
         return MinioClient.builder()
                 .endpoint(url)
+                .credentials(name, secret)
+                .build();
+    }
+
+    @Bean
+    public MinioClient publicMinioClient() {
+        return MinioClient.builder()
+                .endpoint(publicUrl)
                 .credentials(name, secret)
                 .build();
     }
