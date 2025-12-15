@@ -2,6 +2,7 @@ package com.adrian.minishop.dto.request;
 
 import com.adrian.minishop.core.validation.annotation.AtLeastOneFieldNotNull;
 import com.adrian.minishop.core.validation.annotation.ValidFile;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,6 +44,7 @@ public final class UpdateProductRequest {
             message = "Image must be JPG, JPEG or PNG under 2MB",
             required = false
     )
+    @Transient
     private MultipartFile image;
 
     private String categoryId;

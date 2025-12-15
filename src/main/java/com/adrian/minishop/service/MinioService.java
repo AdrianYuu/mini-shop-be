@@ -68,14 +68,12 @@ public class MinioService {
             String extension = fileUtil.getFileExtension(file.getOriginalFilename());
             String objectName = UUID.randomUUID() + extension;
 
-            byte[] fileContent = file.getBytes();
-
-            try (InputStream inputStream = new ByteArrayInputStream(fileContent)) {
+            try (InputStream inputStream = file.getInputStream()) {
                 minioClient.putObject(
                         PutObjectArgs.builder()
                                 .bucket(bucketName)
                                 .object(objectName)
-                                .stream(inputStream, fileContent.length, -1)
+                                .stream(inputStream, -1, 10 * 1024 * 1024)
                                 .contentType(file.getContentType())
                                 .build()
                 );
