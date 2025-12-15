@@ -73,7 +73,7 @@ public class MinioService {
                         PutObjectArgs.builder()
                                 .bucket(bucketName)
                                 .object(objectName)
-                                .stream(inputStream, -1, 10 * 1024 * 1024)
+                                .stream(inputStream, file.getSize(), 10 * 1024 * 1024)
                                 .contentType(file.getContentType())
                                 .build()
                 );
@@ -81,9 +81,7 @@ public class MinioService {
 
             return bucketName + "/" + objectName;
         } catch (IOException e) {
-            throw new FileStorageException(HttpStatus.BAD_REQUEST, "Failed to read file");
-        } catch (ErrorResponseException e) {
-            throw new FileStorageException(HttpStatus.BAD_REQUEST, e.errorResponse().message());
+            throw new FileStorageException(HttpStatus.BAD_REQUEST, "Failed to read file" + e.getMessage());
         } catch (Exception e) {
             throw new FileStorageException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to upload file to bucket: " + bucketName);
         }

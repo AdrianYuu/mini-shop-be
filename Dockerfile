@@ -14,12 +14,8 @@ FROM eclipse-temurin:17-jre-jammy
 
 WORKDIR /app
 
-RUN mkdir -p /app/tmp && chmod 777 /app/tmp
-
-ENV JAVA_OPTS="-Djava.io.tmpdir=/app/tmp"
-
 COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+CMD ["java", "-jar", "app.jar"]

@@ -45,7 +45,6 @@ public final class CreateProductRequest {
             message = "Image must be JPG, JPEG or PNG under 2MB",
             required = false
     )
-    @Transient
     private MultipartFile image;
 
     @NotBlank(
